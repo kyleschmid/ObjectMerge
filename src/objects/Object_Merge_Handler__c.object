@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionOverrides>
+        <actionName>Accept</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>CancelEdit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Clone</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Delete</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Edit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Follow</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>List</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>New</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>SaveEdit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Tab</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <allowInChatterGroups>false</allowInChatterGroups>
+    <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <description>Represents an object to be merged.</description>
+    <enableActivities>false</enableActivities>
+    <enableBulkApi>false</enableBulkApi>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>false</enableHistory>
+    <enableReports>true</enableReports>
+    <enableSearch>false</enableSearch>
+    <enableSharing>false</enableSharing>
+    <enableStreamingApi>false</enableStreamingApi>
+    <fields>
+        <fullName>Active__c</fullName>
+        <defaultValue>true</defaultValue>
+        <description>If checked, this merge handler will be used during the Object merge process.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>If checked, this merge handler will be used during the Object merge process.</inlineHelpText>
+        <label>Active</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Child_Relationship_Name__c</fullName>
+        <description>Name of the child relationship. This can be found in the lookup field metadata or by using Workbench. Please append &quot;__r&quot; for custom lookup fields.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Name of the child relationship. This can be found in the lookup field metadata or by using Workbench. Please append &quot;__r&quot; for custom lookup fields.</inlineHelpText>
+        <label>Child Relationship Name</label>
+        <length>80</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Merge_Action__c</fullName>
+        <description>How the merge will be performed.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>How the merge will be performed.</inlineHelpText>
+        <label>Merge Action</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Create New</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Keep Oldest Created</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Keep Newest Created</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Keep Last Modified</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Delete Duplicate</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Keep Master</fullName>
+                <default>false</default>
+            </picklistValues>
+            <restrictedPicklist>true</restrictedPicklist>
+            <sorted>false</sorted>
+        </picklist>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Object_Lookup_Field_API_Name__c</fullName>
+        <description>API name of the field on the related object that looks up to Object.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>API name of the field on the related object that looks up to Object.</inlineHelpText>
+        <label>Object Lookup Field API Name</label>
+        <length>40</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Parent_Handler__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <description>Handler for the parent object.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Handler for the parent object.</inlineHelpText>
+        <label>Parent Handler</label>
+        <referenceTo>Object_Merge_Handler__c</referenceTo>
+        <relationshipLabel>Object Merge Handlers</relationshipLabel>
+        <relationshipName>Object_Merge_Handlers</relationshipName>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Standard_Action__c</fullName>
+        <description>Action to be performed on the victim record when a duplicate is not found.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Action to be performed on the victim record when a duplicate is not found.</inlineHelpText>
+        <label>Standard Action</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Move Victim</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Clone Victim</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Delete Victim</fullName>
+                <default>false</default>
+            </picklistValues>
+            <restrictedPicklist>true</restrictedPicklist>
+            <sorted>false</sorted>
+        </picklist>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <label>Object Merge Handler</label>
+    <listViews>
+        <fullName>All</fullName>
+        <columns>NAME</columns>
+        <columns>RECORDTYPE</columns>
+        <columns>Parent_Handler__c</columns>
+        <columns>Object_Lookup_Field_API_Name__c</columns>
+        <columns>Standard_Action__c</columns>
+        <columns>Merge_Action__c</columns>
+        <columns>Active__c</columns>
+        <filterScope>Everything</filterScope>
+        <label>All</label>
+    </listViews>
+    <listViews>
+        <fullName>Child_Handlers</fullName>
+        <columns>Parent_Handler__c</columns>
+        <columns>NAME</columns>
+        <columns>Object_Lookup_Field_API_Name__c</columns>
+        <columns>Standard_Action__c</columns>
+        <columns>Merge_Action__c</columns>
+        <columns>Active__c</columns>
+        <filterScope>Everything</filterScope>
+        <filters>
+            <field>RECORDTYPE</field>
+            <operation>equals</operation>
+            <value>Object_Merge_Handler__c.Child_Handler</value>
+        </filters>
+        <label>Child Handlers</label>
+    </listViews>
+    <nameField>
+        <label>Object API Name</label>
+        <type>Text</type>
+    </nameField>
+    <pluralLabel>Object Merge Handlers</pluralLabel>
+    <recordTypes>
+        <fullName>Child_Handler</fullName>
+        <active>true</active>
+        <description>Handler for a child object.</description>
+        <label>Child Handler</label>
+        <picklistValues>
+            <picklist>Merge_Action__c</picklist>
+            <values>
+                <fullName>Create New</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Delete Duplicate</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Keep Last Modified</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Keep Master</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Keep Newest Created</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Keep Oldest Created</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Standard_Action__c</picklist>
+            <values>
+                <fullName>Clone Victim</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Delete Victim</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Move Victim</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+    </recordTypes>
+    <recordTypes>
+        <fullName>Parent_Handler</fullName>
+        <active>true</active>
+        <description>Handler for a parent object.</description>
+        <label>Parent Handler</label>
+        <picklistValues>
+            <picklist>Merge_Action__c</picklist>
+            <values>
+                <fullName>Create New</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Delete Duplicate</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Keep Last Modified</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Keep Master</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Keep Newest Created</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Keep Oldest Created</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+        <picklistValues>
+            <picklist>Standard_Action__c</picklist>
+            <values>
+                <fullName>Clone Victim</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Delete Victim</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Move Victim</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+    </recordTypes>
+    <searchLayouts/>
+    <sharingModel>ReadWrite</sharingModel>
+</CustomObject>
