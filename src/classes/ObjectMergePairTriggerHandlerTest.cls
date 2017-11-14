@@ -79,11 +79,12 @@ private class ObjectMergePairTriggerHandlerTest {
     }
     
     @isTest
-    static void test_clone_victim_create_new() {
+    static void test_clone_victim_clone_reparented_victim() {
         
         Object_Merge_Handler__c h2 = [SELECT Id FROM Object_Merge_Handler__c WHERE Name = :'Contact'];
         h2.Standard_Action__c = 'Clone Victim';
-        h2.Merge_Action__c = 'Create New';
+        h2.Merge_Action__c = 'Keep Oldest Created';
+        h2.Clone_Reparented_Victim__c = true;
         update h2;
         
         Id a1Id = [SELECT Id FROM Account WHERE Name = :'test1'].Id;
@@ -91,6 +92,9 @@ private class ObjectMergePairTriggerHandlerTest {
         Id c1Id = [SELECT Id FROM Contact WHERE LastName = :'test1'].Id;
         Id c2Id = [SELECT Id FROM Contact WHERE LastName = :'test2'].Id;
         Id c3Id = [SELECT Id FROM Contact WHERE LastName = :'test3'].Id;
+        
+        Test.setCreatedDate(c1Id, System.NOW().addMinutes(1));
+        Test.setCreatedDate(c2Id, System.NOW().addMinutes(-1));
         
         Object_Merge_Pair__c p = new Object_Merge_Pair__c(Master_ID__c = a1Id, Victim_ID__c = a2Id);
         
@@ -110,7 +114,7 @@ private class ObjectMergePairTriggerHandlerTest {
         System.assert([SELECT Id FROM Contact WHERE Id = :c2Id].isEmpty());
         System.assert([SELECT Id FROM Contact WHERE Id = :c3Id].isEmpty());
         
-        Contact clone = [SELECT Id, AccountId, LastName, Email FROM Contact WHERE LastName = :'test1'];
+        Contact clone = [SELECT Id, AccountId, LastName, Email FROM Contact WHERE LastName = :'test2'];
         System.assertEquals(a1Id, clone.AccountId);
         System.assertEquals('test@test.com', clone.Email);
         

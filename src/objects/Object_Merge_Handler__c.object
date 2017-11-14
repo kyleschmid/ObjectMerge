@@ -79,16 +79,22 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Clone_Reparented_Victim__c</fullName>
+        <defaultValue>false</defaultValue>
+        <description>If checked, a victim record that would normally be reparented would instead be cloned. This is useful for master-detail relationships that don&apos;t allow reparenting.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>If checked, a victim record that would normally be reparented would instead be cloned. This is useful for master-detail relationships that don&apos;t allow reparenting.</inlineHelpText>
+        <label>Clone Reparented Victim</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
         <fullName>Merge_Action__c</fullName>
         <description>How the merge will be performed.</description>
         <externalId>false</externalId>
         <inlineHelpText>How the merge will be performed.</inlineHelpText>
         <label>Merge Action</label>
         <picklist>
-            <picklistValues>
-                <fullName>Create New</fullName>
-                <default>false</default>
-            </picklistValues>
             <picklistValues>
                 <fullName>Keep Oldest Created</fullName>
                 <default>false</default>
@@ -175,8 +181,10 @@
         <columns>RECORDTYPE</columns>
         <columns>Parent_Handler__c</columns>
         <columns>Object_Lookup_Field_API_Name__c</columns>
+        <columns>Child_Relationship_Name__c</columns>
         <columns>Standard_Action__c</columns>
         <columns>Merge_Action__c</columns>
+        <columns>Clone_Reparented_Victim__c</columns>
         <columns>Active__c</columns>
         <filterScope>Everything</filterScope>
         <label>All</label>
@@ -186,8 +194,10 @@
         <columns>Parent_Handler__c</columns>
         <columns>NAME</columns>
         <columns>Object_Lookup_Field_API_Name__c</columns>
+        <columns>Child_Relationship_Name__c</columns>
         <columns>Standard_Action__c</columns>
         <columns>Merge_Action__c</columns>
+        <columns>Clone_Reparented_Victim__c</columns>
         <columns>Active__c</columns>
         <filterScope>Everything</filterScope>
         <filters>
@@ -209,10 +219,6 @@
         <label>Child Handler</label>
         <picklistValues>
             <picklist>Merge_Action__c</picklist>
-            <values>
-                <fullName>Create New</fullName>
-                <default>false</default>
-            </values>
             <values>
                 <fullName>Delete Duplicate</fullName>
                 <default>false</default>
@@ -257,10 +263,6 @@
         <label>Parent Handler</label>
         <picklistValues>
             <picklist>Merge_Action__c</picklist>
-            <values>
-                <fullName>Create New</fullName>
-                <default>false</default>
-            </values>
             <values>
                 <fullName>Delete Duplicate</fullName>
                 <default>false</default>

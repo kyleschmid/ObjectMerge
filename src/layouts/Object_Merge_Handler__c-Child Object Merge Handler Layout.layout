@@ -42,6 +42,10 @@
                 <behavior>Edit</behavior>
                 <field>Merge_Action__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Clone_Reparented_Victim__c</field>
+            </layoutItems>
         </layoutColumns>
         <style>TwoColumnsTopToBottom</style>
     </layoutSections>

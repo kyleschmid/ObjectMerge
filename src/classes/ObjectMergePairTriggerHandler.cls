@@ -1,34 +1,3 @@
-/*
-BSD 3-Clause License
-
-Copyright (c) 2017, Kyle Schmid, Huron Consulting Group
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-
-* Redistributions of source code must retain the above copyright notice, this
-  list of conditions and the following disclaimer.
-
-* Redistributions in binary form must reproduce the above copyright notice,
-  this list of conditions and the following disclaimer in the documentation
-  and/or other materials provided with the distribution.
-
-* Neither the name of the copyright holder nor the names of its
-  contributors may be used to endorse or promote products derived from
-  this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
 public class ObjectMergePairTriggerHandler {
 	
     public static void MergeObjects(List<Object_Merge_Pair__c> pairs, Boolean isUpdate) {
@@ -84,7 +53,7 @@ public class ObjectMergePairTriggerHandler {
         
         // Get map of handlers grouped by object name
         Map<String, Object_Merge_Handler__c> handlers = new Map<String, Object_Merge_Handler__c>();
-        for (Object_Merge_Handler__c h:[SELECT Id, Name, (SELECT Id, Name, Child_Relationship_Name__c, Object_Lookup_Field_API_Name__c, Standard_Action__c, Merge_Action__c FROM Object_Merge_Handlers__r WHERE Active__c = :true) FROM Object_Merge_Handler__c WHERE RecordType.DeveloperName = :'Parent_Handler' AND Active__c = :true AND Name IN :pairMap.keySet()])
+        for (Object_Merge_Handler__c h:[SELECT Id, Name, (SELECT Id, Name, Child_Relationship_Name__c, Object_Lookup_Field_API_Name__c, Standard_Action__c, Merge_Action__c, Clone_Reparented_Victim__c FROM Object_Merge_Handlers__r WHERE Active__c = :true) FROM Object_Merge_Handler__c WHERE RecordType.DeveloperName = :'Parent_Handler' AND Active__c = :true AND Name IN :pairMap.keySet()])
             handlers.put(h.Name.toLowerCase(), h);
         
         // Get maps of fields and matching fields grouped by parent id
@@ -119,7 +88,7 @@ public class ObjectMergePairTriggerHandler {
         }
     }
 	
-	// Method to perform merge of a list of pairs of the same object type
+	// Method to perform merge of a list of pairs of the same object type    
     private static void doMerge(List<Object_Merge_Pair__c> pairs, Object_Merge_Handler__c handler, Map<Id, List<Object_Merge_Field__c>> fields, Map<Id, List<Object_Merge_Field__c>> matchingFields) {
         
         // Get set of parent record ids
@@ -182,18 +151,7 @@ public class ObjectMergePairTriggerHandler {
                         
                         SObject masterChild = masterChildren.get(key);
                         
-                        if (h.Merge_Action__c.equals('Create New')) {
-                            
-                            // CLone master and merge victim child into clone
-                            SObject newChild = masterChild.clone(false, true, false, false);
-                            mergeFields(fields.get(h.Id), newChild, child);
-                            
-                            // Add clone to insert list and master/victim children to delete list
-                            recordsToInsert.add(newChild);
-                            recordsToDelete.add(child);
-                            recordsToDelete.add(masterChild);
-                            
-                        } else if (h.Merge_Action__c.equals('Keep Master')) {
+                        if (h.Merge_Action__c.equals('Keep Master')) {
                             
                             // Merge victim child into matching master child
                             // Add master child to update list if updated
@@ -211,17 +169,17 @@ public class ObjectMergePairTriggerHandler {
                         } else if (h.Merge_Action__c.equals('Keep Oldest Created')) {
                             
                             // Master wins if created date is less than child created date
-                            mergeChildren((Datetime)masterChild.get('CreatedDate') <= (Datetime)child.get('CreatedDate'), fields.get(h.Id), masterChild, child, recordsToUpdate, recordsToDelete, h.Object_Lookup_Field_API_Name__c);
+                            mergeChildren((Datetime)masterChild.get('CreatedDate') <= (Datetime)child.get('CreatedDate'), fields.get(h.Id), masterChild, child, recordsToInsert, recordsToUpdate, recordsToDelete, h.Object_Lookup_Field_API_Name__c, h.Clone_Reparented_Victim__c);
                             
                         } else if (h.Merge_Action__c.equals('Keep Newest Created')) {
                             
                             // Master wins if created date is greater than child created date
-                            mergeChildren((Datetime)masterChild.get('CreatedDate') >= (Datetime)child.get('CreatedDate'), fields.get(h.Id), masterChild, child, recordsToUpdate, recordsToDelete, h.Object_Lookup_Field_API_Name__c);
+                            mergeChildren((Datetime)masterChild.get('CreatedDate') >= (Datetime)child.get('CreatedDate'), fields.get(h.Id), masterChild, child, recordsToInsert, recordsToUpdate, recordsToDelete, h.Object_Lookup_Field_API_Name__c, h.Clone_Reparented_Victim__c);
                             
                         } else if (h.Merge_Action__c.equals('Keep Last Modified')) {
                             
                             // Master wins if last modified date is greater than child created date
-                            mergeChildren((Datetime)masterChild.get('LastModifiedDate') >= (Datetime)child.get('LastModifiedDate'), fields.get(h.Id), masterChild, child, recordsToUpdate, recordsToDelete, h.Object_Lookup_Field_API_Name__c);
+                            mergeChildren((Datetime)masterChild.get('LastModifiedDate') >= (Datetime)child.get('LastModifiedDate'), fields.get(h.Id), masterChild, child, recordsToInsert, recordsToUpdate, recordsToDelete, h.Object_Lookup_Field_API_Name__c, h.Clone_Reparented_Victim__c);
                         }
                         
                     } else if (h.Standard_Action__c.equals('Move Victim')) {
@@ -305,17 +263,37 @@ public class ObjectMergePairTriggerHandler {
     }
     
     // Merges children and adds to update/delete lists
-    private static void mergeChildren(Boolean masterWins, List<Object_Merge_Field__c> fields, SObject master, SObject victim, List<SObject> recordsToUpdate, List<SObject> recordsToDelete, String parentFieldAPIName) {
+    private static void mergeChildren(Boolean masterWins, List<Object_Merge_Field__c> fields, SObject master, SObject victim, List<SObject> recordsToInsert, List<SObject> recordsToUpdate, List<SObject> recordsToDelete, String parentFieldAPIName, Boolean cloneReparentedVictim) {
         
         if (masterWins) {
+            
             if (mergeFields(fields, master, victim))
             	recordsToUpdate.add(master);
             recordsToDelete.add(victim);
+            
         } else {
-            mergeFields(fields, victim, master);
-            victim.put(parentFieldAPIName, master.get(parentFieldAPIName));
-            recordsToUpdate.add(victim);
-            recordsToDelete.add(master);
+            
+            if (cloneReparentedVictim) {
+                
+                // Clone victim and merge master child into clone
+                SObject newChild = victim.clone(false, true, false, false);
+                newChild.put(parentFieldAPIName, master.get(parentFieldAPIName));
+                mergeFields(fields, newChild, master);
+                
+                // Add clone to insert list and master/victim children to delete list
+                recordsToInsert.add(newChild);
+                recordsToDelete.add(victim);
+                recordsToDelete.add(master);
+            } else {
+                
+                // Merge master into victim and reparent victim
+                mergeFields(fields, victim, master);
+                victim.put(parentFieldAPIName, master.get(parentFieldAPIName));
+                
+                // Add master to delete list and victim to update list
+                recordsToUpdate.add(victim);
+            	recordsToDelete.add(master);
+            }
         }
     }
     
