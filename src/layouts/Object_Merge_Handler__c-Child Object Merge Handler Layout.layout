@@ -32,9 +32,6 @@
                 <field>Active__c</field>
             </layoutItems>
             <layoutItems>
-                <emptySpace>true</emptySpace>
-            </layoutItems>
-            <layoutItems>
                 <behavior>Required</behavior>
                 <field>Standard_Action__c</field>
             </layoutItems>

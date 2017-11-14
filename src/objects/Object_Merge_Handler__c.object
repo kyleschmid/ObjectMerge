@@ -207,6 +207,18 @@
         </filters>
         <label>Child Handlers</label>
     </listViews>
+    <listViews>
+        <fullName>Parent_Handlers</fullName>
+        <columns>NAME</columns>
+        <columns>Active__c</columns>
+        <filterScope>Everything</filterScope>
+        <filters>
+            <field>RECORDTYPE</field>
+            <operation>equals</operation>
+            <value>Object_Merge_Handler__c.Parent_Handler</value>
+        </filters>
+        <label>Parent Handlers</label>
+    </listViews>
     <nameField>
         <label>Object API Name</label>
         <type>Text</type>
