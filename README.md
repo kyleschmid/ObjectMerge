@@ -8,7 +8,16 @@ This solution allows you to specify merging rules for parent objects, their fiel
 
 ## Installation
 
-Object Merge is released under the open source BSD license. Contributions (code and otherwise) are welcome and encouraged. You can fork this repository and deploy the unmanaged version of the code into a Salesforce org of your choice.
+Object Merge is released under the open source BSD license. Contributions (code and otherwise) are welcome and encouraged. You can install in one of two ways:
+
+### Unmangaged Package
+
+You can go to one of the following URLs to install Object Merge as an unmanaged package:
+* Production: https://login.salesforce.com/packaging/installPackage.apexp?p0=04t0H0000019nSF
+* Sandbox: https://test.salesforce.com/packaging/installPackage.apexp?p0=04t0H0000019nSF
+
+### Ant/Force.com Migration Tool
+You can fork this repository and deploy the unmanaged version of the code into a Salesforce org of your choice.
 
 * Fork the repository by clicking on the "Fork" button in the upper-righthand corner. This creates your own copy of Object Merge for your Github user.
 * Clone your fork to your local machine via the command line
