@@ -48,6 +48,12 @@ $ ant deploy
 
 ## Uninstallation
 
+### Unmangaged Package
+
+Go to Setup>Installed Packages and click "Uninstall" next to ObjectMerge.
+
+### Ant/Force.com Migration Tool
+
 * Undeploy using ant
 
 ```sh
