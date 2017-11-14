@@ -54,37 +54,45 @@ Once installed, you'll want to set up your first Object Merge Handler. To do so,
 
 1. Go to the Object Merge Handlers table
 2. Create a new Object Merge Handler with the Parent Handler record type
-  * Populate the Object API Name with the API name of the main object to be merged (e.g. "Account")
+	* Populate the Object API Name with the API name of the main object to be merged (e.g. "Account")
 3. Click "New" on the Object Merge Fields related list
-  * Populate each Object Merge Field record with the API name of the field on the parent object (e.g. "Name" or "Description")
-  * When the merge is performed, any field that is null on the master but not null on the victim will be copied over to the master
-  * Ignore the "Use for Matching" checkbox for parent fields
+  	* Populate each Object Merge Field record with the API name of the field on the parent object (e.g. "Name" or "Description")
+  	* When the merge is performed, any field that is null on the master but not null on the victim will be copied over to the master
+  	* Ignore the "Use for Matching" checkbox for parent fields
 4. Go back to the Object Merge Handler and click "New" on the Object Merge Handlers related list
-  * Select "Child Handler" for the Record Type
-  * Populate the Object API Name of the field with the API name of the object related to the parent object that you want to merge (e.g. "Contact")
-  * Populate the Object Lookup Field API Name with the API name of the field that looks-up to the parent object (e.g. "AccountId")
-  * Populate the Child Relationship Name with the API name of the child relationship (e.g. "Contacts"). This can be found by using Workbench, Google, or    going to the properties of a custom lookup field, copying what is in the Child Relationship Name field, and appending "\__r"
-  * Populate the Standard Action field with what you want to happen to the related object record when a duplicate is not found on the master:
-    * Move Victim: Victim record will be re-parented to master
-    * Clone Victim: Victim record will be cloned and the clone will be parented to master (helpful for Master-Detail relationships that don't allow reparenting)
-    * Delete Victim: Deletes the victim record entirely
-  * Populate the Merge Action field with what you want to have happen when a duplicate related record is found:
-    * Create New: The master will be cloned and the victim will be merged into the clone. Both the master and the victim are then deleted.
-    * Keep Oldest Created: The newest created will be merged into the oldest created. The oldest created will be reparented if it is the victim. The newest created will then be deleted.
-    * Keep Newest Created: The oldest created will be merged into the newest created. The newest created will be reparented if it is the victim. The oldest created will then be deleted.
-    * Keep Last Modified: The oldest last modified will be merged into the newest last modified. The newest last modified will be reparented if it is the victim. The oldest last modified will then be deleted.
-    * Delete Duplicate: The victim will be deleted without any merging.
-    * Keep Master: The victim will be merged into the master and the victim will be deleted
+  	* Select "Child Handler" for the Record Type
+  	* Populate the Object API Name of the field with the API name of the object related to the parent object that you want to merge (e.g. "Contact")
+  	* Populate the Object Lookup Field API Name with the API name of the field that looks-up to the parent object (e.g. "AccountId")
+  	* Populate the Child Relationship Name with the API name of the child relationship (e.g. "Contacts"). This can be found by using Workbench, Google, or    going to the properties of a custom lookup field, copying what is in the Child Relationship Name field, and appending "\__r"
+  	* Populate the Standard Action field with what you want to happen to the related object record when a duplicate is not found on the master:
+    	* Move Victim: Victim record will be re-parented to master
+    	* Clone Victim: Victim record will be cloned and the clone will be parented to master (helpful for Master-Detail relationships that don't allow reparenting)
+    	* Delete Victim: Deletes the victim record entirely
+  	* Populate the Merge Action field with what you want to have happen when a duplicate related record is found:
+    	* Keep Oldest Created: The newest created will be merged into the oldest created. The oldest created will be reparented if it is the victim. The newest created will then be deleted.
+    	* Keep Newest Created: The oldest created will be merged into the newest created. The newest created will be reparented if it is the victim. The oldest created will then be deleted.
+    	* Keep Last Modified: The oldest last modified will be merged into the newest last modified. The newest last modified will be reparented if it is the victim. The oldest last modified will then be deleted.
+    	* Delete Duplicate: The victim will be deleted without any merging.
+    	* Keep Master: The victim will be merged into the master and the victim will be deleted
+    * Check the "Clone Reparented Victim" checkbox if you'd like the victim to be cloned if it is the winner. This is useful for master-detail relationships that don't allow reparenting. In this case, the victim will be cloned and the master will be merged into the clone. The clone will then be reparented and inserted. Both the master and the victim will be deleted.
 5. Click "New" on the Object Merge Fields related list
-  * Create a new object Merge Field record for every field you want to merge for this object
-  * Check the "Use for Matching" checkbox for any fields that you want to consider when finding duplicates
+  	* Create a new object Merge Field record for every field you want to merge for this object
+  	* Check the "Use for Matching" checkbox for any fields that you want to consider when finding duplicates
 6. You're now ready to perform your first merge! Go to the Object Merge Pairs tab and click "New"
-  * Populate the Master ID with the ID of the record you want to keep
-  * Populate the Victim ID with the ID of the record you want to delete
-  * Ignore the Status field
-  * Click Save
+  	* Populate the Master ID with the ID of the record you want to keep
+  	* Populate the Victim ID with the ID of the record you want to delete
+  	* Ignore the Status field
+  	* Click Save
 7. If the merge was successful, the Status field will be populated with "Merged". If not, it will be populated with "Error" and the Error Reason field will give some detail around why the merge failed. You can change the status to "Retry" to try the merge again.
 
-## Typical Use Case
+## Typical Use Cases
 
-While this tool doesn't identify duplicates, Salesforce has great standard features for doing so. You can run a report to get duplicate IDs and then use data loader with the Object Merge Pair object to merge duplicates en masse.
+* While this tool doesn't identify duplicates, Salesforce has great standard features for doing so. You can run a report to get duplicate IDs and then use data loader with the Object Merge Pair object to merge duplicates en masse.
+* If you'd like to provide a more intuitive UI for your users to merge certain types of objects, you can leverage custom lookup fields, workflow field updates, and record types to remove the need for users to copy and paste Salesforce IDs. Example for Contact:
+	* Create "Master Contact" and "Victim Contact" lookups
+	* Create a "Contact Merge Pair" Page Layout
+	* Create a "Contact Merge" Record Type
+	* Assign the new Page Layout to the new Record Type
+	* Add the new lookup fields to the new Page Layout
+	* Create a Workflow Field Update on Object Merge Pair that populates the Master ID field with whatever is in the Master Contact field. Do the same for Victim ID and Victim Contact.
+	* Create a Workflow Rule that runs on create of Object Merge Pair and add these two Workflow Field Updates to it
