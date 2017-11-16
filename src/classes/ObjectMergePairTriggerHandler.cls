@@ -159,10 +159,12 @@ public class ObjectMergePairTriggerHandler {
                 continue;
             }
             
-            Boolean masterUpdated = mergeFields(fields.get(handler.Id), master, victim);
+            // Merge parents and add to DML lists
+            if (mergeFields(fields.get(handler.Id), master, victim))
+                recordsToUpdate.add(master);
+            recordsToDelete.add(victim);
             
             // Handle child records
-            Boolean childError = false;
             for (Object_Merge_Handler__c h:handler.Object_Merge_Handlers__r) {
                 
                 // Get map of key for master children and corresponding children
@@ -236,43 +238,43 @@ public class ObjectMergePairTriggerHandler {
                     }
                 }
             }
-            
-            // Add parents to DML lists
-            if (!childError) {
-                if (masterUpdated) recordsToUpdate.add(master);
-                recordsToDelete.add(victim);
-            }
         }
         
         // Get list of all update records that are not in the delete list
         Set<Id> recordsToDeleteIdsSet = new Set<Id>();
-        List<Id> recordsToDeleteIds = new List<Id>();
+        List<SObject> recordsToDeleteList = new List<SObject>();
         for (SObject so:recordsToDelete) {
             if (!recordsToDeleteIdsSet.contains(so.Id)) {
             	recordsToDeleteIdsSet.add(so.Id);
-                recordsToDeleteIds.add(so.Id);
+                recordsToDeleteList.add(so);
             }
         }
         Set<Id> recordsToUpdateIds = new Set<Id>();
         List<SObject> recordsToUpdateList = new List<SObject>();
         for (SObject so:recordsToUpdate) {
             if (!recordsToDeleteIdsSet.contains(so.Id) && !recordsToUpdateIds.contains(so.Id)) {
-            	recordsToUpdateList.add(so);
-                recordsToUpdateIds.add(so.Id);
+            	recordsToUpdateIds.add(so.Id);
+                recordsToUpdateList.add(so);
             }
         }
         
         System.Savepoint sp = Database.setSavepoint(); // Set savepoint to rollback on error;
         try {
-            update recordsToUpdateList; // Update records
-            insert recordsToInsert; // Insert records
+            
+            // Update records
+            for (List<SObject> objects:groupSObjects(recordsToUpdateList, handler))
+                update objects;
+            
+            // Insert records
+            for (List<SObject> objects:groupSObjects(recordsToInsert, handler))
+                insert objects;
             
             // Delete records and handle ENTITY_IS_DELETED error if records got deleted due to other DML
-            Database.DeleteResult[] results = Database.delete(recordsToDeleteIds, false);
-            for (Database.DeleteResult dr:results)
-                for (Database.Error er:dr.getErrors())
-                	if (er.getStatusCode() != StatusCode.ENTITY_IS_DELETED)
-                		throw new ObjectMergePairException();
+            for (List<SObject> objects:groupSObjects(recordsToDeleteList, handler))
+                for (Database.DeleteResult dr:Database.delete(objects, false))
+                    for (Database.Error er:dr.getErrors())
+                        if (er.getStatusCode() != StatusCode.ENTITY_IS_DELETED)
+                            throw new ObjectMergePairException();
             
         } catch (Exception e) {
             Database.rollback(sp);
@@ -391,6 +393,25 @@ public class ObjectMergePairTriggerHandler {
                 }
             }
         }
+        return ret;
+    }
+    
+    // Return List of Lists of SObjects, grouped by type with parents at end
+    private static List<List<SObject>> groupSObjects(List<SObject> objects, Object_Merge_Handler__c handler) {
+        Schema.SObjectType parentType = Schema.getGlobalDescribe().get(handler.Name);
+        List<SObject> parents = new List<SObject>();
+        Map<Schema.SObjectType, List<SObject>> objectMap = new Map<Schema.SObjectType, List<SObject>>();
+        for (SObject so:objects) {
+            if (so.getSObjectType() == parentType) {
+                parents.add(so);
+            } else {
+                if (!objectMap.containsKey(so.getSObjectType()))
+                    objectMap.put(so.getSObjectType(), new List<SObject>());
+                objectMap.get(so.getSObjectType()).add(so);
+            }
+        }
+        List<List<SObject>> ret = objectMap.values();
+        ret.add(parents);
         return ret;
     }
     
