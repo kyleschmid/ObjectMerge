@@ -13,8 +13,8 @@ Object Merge is released under the open source BSD license. Contributions (code 
 ### Unmangaged Package
 
 You can go to one of the following URLs to install Object Merge as an unmanaged package:
-* Production: https://login.salesforce.com/packaging/installPackage.apexp?p0=04t0H0000019nSK
-* Sandbox: https://test.salesforce.com/packaging/installPackage.apexp?p0=04t0H0000019nSK
+* Production: https://login.salesforce.com/packaging/installPackage.apexp?p0=04t0H0000019nSo
+* Sandbox: https://test.salesforce.com/packaging/installPackage.apexp?p0=04t0H0000019nSo
 
 ### Ant/Force.com Migration Tool
 You can fork this repository and deploy the unmanaged version of the code into a Salesforce org of your choice.
