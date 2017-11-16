@@ -245,13 +245,18 @@ public class ObjectMergePairTriggerHandler {
         }
         
         // Get list of all update records that are not in the delete list
-        Set<Id> recordsToDeleteIds = new Set<Id>();
-        for (SObject so:recordsToDelete)
-            recordsToDeleteIds.add(so.Id);
+        Set<Id> recordsToDeleteIdsSet = new Set<Id>();
+        List<Id> recordsToDeleteIds = new List<Id>();
+        for (SObject so:recordsToDelete) {
+            if (!recordsToDeleteIdsSet.contains(so.Id)) {
+            	recordsToDeleteIdsSet.add(so.Id);
+                recordsToDeleteIds.add(so.Id);
+            }
+        }
         Set<Id> recordsToUpdateIds = new Set<Id>();
         List<SObject> recordsToUpdateList = new List<SObject>();
         for (SObject so:recordsToUpdate) {
-            if (!recordsToDeleteIds.contains(so.Id) && !recordsToUpdateIds.contains(so.Id)) {
+            if (!recordsToDeleteIdsSet.contains(so.Id) && !recordsToUpdateIds.contains(so.Id)) {
             	recordsToUpdateList.add(so);
                 recordsToUpdateIds.add(so.Id);
             }
@@ -263,7 +268,7 @@ public class ObjectMergePairTriggerHandler {
             insert recordsToInsert; // Insert records
             
             // Delete records and handle ENTITY_IS_DELETED error if records got deleted due to other DML
-            Database.DeleteResult[] results = Database.delete(new List<Id>(recordsToDeleteIds), false);
+            Database.DeleteResult[] results = Database.delete(recordsToDeleteIds, false);
             for (Database.DeleteResult dr:results)
                 for (Database.Error er:dr.getErrors())
                 	if (er.getStatusCode() != StatusCode.ENTITY_IS_DELETED)
