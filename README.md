@@ -78,7 +78,8 @@ Once installed, you'll want to set up your first Object Merge Handler. To do so,
   	* Select "Child Handler" for the Record Type
   	* Populate the Object API Name of the field with the API name of the object related to the parent object that you want to merge (e.g. "Contact")
   	* Populate the Object Lookup Field API Name with the API name of the field that looks-up to the parent object (e.g. "AccountId")
-  	* Populate the Child Relationship Name with the API name of the child relationship (e.g. "Contacts"). This can be found by using Workbench, Google, or    going to the properties of a custom lookup field, copying what is in the Child Relationship Name field, and appending "\__r"
+  	* Populate the Child Relationship Name with the API name of the child relationship (e.g. "Contacts"). This can be found by using Workbench, Google, or going to the properties of a custom lookup field, copying what is in the Child Relationship Name field, and appending "\__r"
+    * Populate the Order of Execution field with the order in which you want this object to be processed relative to other child objects. This is not required.
   	* Populate the Standard Action field with what you want to happen to the related object record when a duplicate is not found on the master:
     	* Move Victim: Victim record will be re-parented to master
     	* Clone Victim: Victim record will be cloned and the clone will be parented to master (helpful for Master-Detail relationships that don't allow reparenting)
