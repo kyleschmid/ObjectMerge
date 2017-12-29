@@ -25,6 +25,10 @@
                 <behavior>Required</behavior>
                 <field>Child_Relationship_Name__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Order_of_Execution__c</field>
+            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>

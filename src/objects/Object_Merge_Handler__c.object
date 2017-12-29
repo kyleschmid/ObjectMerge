@@ -21,10 +21,6 @@
         <type>Default</type>
     </actionOverrides>
     <actionOverrides>
-        <actionName>Follow</actionName>
-        <type>Default</type>
-    </actionOverrides>
-    <actionOverrides>
         <actionName>List</actionName>
         <type>Default</type>
     </actionOverrides>
@@ -94,33 +90,35 @@
         <externalId>false</externalId>
         <inlineHelpText>How the merge will be performed.</inlineHelpText>
         <label>Merge Action</label>
-        <picklist>
-            <picklistValues>
-                <fullName>Keep Oldest Created</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Keep Newest Created</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Keep Last Modified</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Delete Duplicate</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Keep Master</fullName>
-                <default>false</default>
-            </picklistValues>
-            <restrictedPicklist>true</restrictedPicklist>
-            <sorted>false</sorted>
-        </picklist>
         <required>false</required>
         <trackTrending>false</trackTrending>
         <type>Picklist</type>
+        <valueSet>
+            <restricted>true</restricted>
+            <valueSetDefinition>
+                <sorted>false</sorted>
+                <value>
+                    <fullName>Keep Oldest Created</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>Keep Newest Created</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>Keep Last Modified</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>Delete Duplicate</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>Keep Master</fullName>
+                    <default>false</default>
+                </value>
+            </valueSetDefinition>
+        </valueSet>
     </fields>
     <fields>
         <fullName>Object_Lookup_Field_API_Name__c</fullName>
@@ -132,6 +130,19 @@
         <required>false</required>
         <trackTrending>false</trackTrending>
         <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Order_of_Execution__c</fullName>
+        <description>Order in which this handler is executed.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Order in which this handler is executed.</inlineHelpText>
+        <label>Order of Execution</label>
+        <precision>3</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
         <unique>false</unique>
     </fields>
     <fields>
@@ -154,25 +165,27 @@
         <externalId>false</externalId>
         <inlineHelpText>Action to be performed on the victim record when a duplicate is not found.</inlineHelpText>
         <label>Standard Action</label>
-        <picklist>
-            <picklistValues>
-                <fullName>Move Victim</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Clone Victim</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Delete Victim</fullName>
-                <default>false</default>
-            </picklistValues>
-            <restrictedPicklist>true</restrictedPicklist>
-            <sorted>false</sorted>
-        </picklist>
         <required>false</required>
         <trackTrending>false</trackTrending>
         <type>Picklist</type>
+        <valueSet>
+            <restricted>true</restricted>
+            <valueSetDefinition>
+                <sorted>false</sorted>
+                <value>
+                    <fullName>Move Victim</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>Clone Victim</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>Delete Victim</fullName>
+                    <default>false</default>
+                </value>
+            </valueSetDefinition>
+        </valueSet>
     </fields>
     <label>Object Merge Handler</label>
     <listViews>
@@ -185,6 +198,7 @@
         <columns>Standard_Action__c</columns>
         <columns>Merge_Action__c</columns>
         <columns>Clone_Reparented_Victim__c</columns>
+        <columns>Order_of_Execution__c</columns>
         <columns>Active__c</columns>
         <filterScope>Everything</filterScope>
         <label>All</label>
@@ -198,6 +212,7 @@
         <columns>Standard_Action__c</columns>
         <columns>Merge_Action__c</columns>
         <columns>Clone_Reparented_Victim__c</columns>
+        <columns>Order_of_Execution__c</columns>
         <columns>Active__c</columns>
         <filterScope>Everything</filterScope>
         <filters>

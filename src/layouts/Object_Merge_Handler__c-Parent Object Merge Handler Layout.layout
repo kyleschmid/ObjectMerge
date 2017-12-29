@@ -67,6 +67,7 @@
         <fields>Object_Lookup_Field_API_Name__c</fields>
         <fields>Standard_Action__c</fields>
         <fields>Merge_Action__c</fields>
+        <fields>Order_of_Execution__c</fields>
         <fields>Active__c</fields>
         <relatedList>Object_Merge_Handler__c.Parent_Handler__c</relatedList>
         <sortField>NAME</sortField>

@@ -84,7 +84,7 @@ public class ObjectMergePairTriggerHandler {
         
         // Get map of handlers grouped by object name
         Map<String, Object_Merge_Handler__c> handlers = new Map<String, Object_Merge_Handler__c>();
-        for (Object_Merge_Handler__c h:[SELECT Id, Name, (SELECT Id, Name, Child_Relationship_Name__c, Object_Lookup_Field_API_Name__c, Standard_Action__c, Merge_Action__c, Clone_Reparented_Victim__c FROM Object_Merge_Handlers__r WHERE Active__c = :true) FROM Object_Merge_Handler__c WHERE RecordType.DeveloperName = :'Parent_Handler' AND Active__c = :true AND Name IN :pairMap.keySet()])
+        for (Object_Merge_Handler__c h:[SELECT Id, Name, (SELECT Id, Name, Child_Relationship_Name__c, Object_Lookup_Field_API_Name__c, Standard_Action__c, Merge_Action__c, Clone_Reparented_Victim__c FROM Object_Merge_Handlers__r WHERE Active__c = :true ORDER BY Order_of_Execution__c ASC NULLS LAST) FROM Object_Merge_Handler__c WHERE RecordType.DeveloperName = :'Parent_Handler' AND Active__c = :true AND Name IN :pairMap.keySet()])
             handlers.put(h.Name.toLowerCase(), h);
         
         // Get maps of fields and matching fields grouped by parent id
@@ -119,7 +119,7 @@ public class ObjectMergePairTriggerHandler {
         }
     }
 	
-	// Method to perform merge of a list of pairs of the same object type
+	// Method to perform merge of a list of pairs of the same object type    
     private static void doMerge(List<Object_Merge_Pair__c> pairs, Object_Merge_Handler__c handler, Map<Id, List<Object_Merge_Field__c>> fields, Map<Id, List<Object_Merge_Field__c>> matchingFields) {
         
         // Get set of parent record ids
