@@ -53,11 +53,11 @@ public class ObjectMergePairTriggerHandler {
                 if (Id.valueOf(p.Master_ID__c).getSobjectType() != Id.valueOf(p.Victim_ID__c).getSobjectType())
                     throw new ObjectMergePairException();
                 
+                prefixes.add(String.valueOf(Id.valueOf(p.Master_ID__c)).substring(0, 3));
+                
             } catch (Exception e) {
                 addError(p, 'Invalid Master/Victim ID pair');
             }
-            
-            prefixes.add(String.valueOf(Id.valueOf(p.Master_ID__c)).substring(0, 3));
         }
         
         // Get prefix-name map
@@ -119,7 +119,7 @@ public class ObjectMergePairTriggerHandler {
         }
     }
 	
-	// Method to perform merge of a list of pairs of the same object type    
+	// Method to perform merge of a list of pairs of the same object type
     private static void doMerge(List<Object_Merge_Pair__c> pairs, Object_Merge_Handler__c handler, Map<Id, List<Object_Merge_Field__c>> fields, Map<Id, List<Object_Merge_Field__c>> matchingFields) {
         
         // Get set of parent record ids

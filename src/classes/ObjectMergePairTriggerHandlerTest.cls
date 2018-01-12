@@ -342,6 +342,28 @@ private class ObjectMergePairTriggerHandlerTest {
         System.assertEquals('Error performing DML', p1.Error_Reason__c);
     }
     
+    @isTest
+    static void test_errors_4() {
+        
+        Object_Merge_Pair__c p1 = new Object_Merge_Pair__c(Master_ID__c = 'test', Victim_ID__c = 'test');
+        Object_Merge_Pair__c p2 = new Object_Merge_Pair__c(Master_ID__c = 'test', Victim_ID__c = 'test');
+        insert new List<Object_Merge_Pair__c>{p1, p2};
+        
+        p1.Status__c = 'Retry';
+        p1.Master_ID__c = p2.Id;
+        p1.Victim_ID__c = p1.Id;
+        
+        Test.startTest();
+        
+        update p1;
+        
+        Test.stopTest();
+        
+        p1 = [SELECT Id, Error_Reason__c FROM Object_Merge_Pair__c WHERE Id = :p1.Id];
+        
+        System.assertEquals('Error performing DML', p1.Error_Reason__c);
+    }
+    
     @testSetup
     static void setup() {
         
@@ -360,7 +382,8 @@ private class ObjectMergePairTriggerHandlerTest {
         Object_Merge_Handler__c h1 = new Object_Merge_Handler__c(Name = 'Account', Active__c = true, RecordTypeId = pId);
         insert h1;
         Object_Merge_Handler__c h2 = new Object_Merge_Handler__c(Name = 'Contact', Active__c = true, Standard_Action__c = 'Delete Victim', RecordTypeId = cId, Child_Relationship_Name__c = 'Contacts', Object_Lookup_Field_API_Name__c = 'AccountId', Parent_Handler__c = h1.Id);
-        insert h2;
+        Object_Merge_Handler__c h3 = new Object_Merge_Handler__c(Name = 'Object_Merge_Pair__c', RecordTypeId = pId);
+        insert new List<Object_Merge_Handler__c>{h2, h3};
         
         Object_Merge_Field__c f1 = new Object_Merge_Field__c(Name = 'Name', Use_for_Matching__c = false, Object_Merge_Handler__c = h1.Id, Active__c = true);
         Object_Merge_Field__c f2 = new Object_Merge_Field__c(Name = 'Website', Use_for_Matching__c = false, Object_Merge_Handler__c = h1.Id, Active__c = true);

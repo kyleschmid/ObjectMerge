@@ -12,9 +12,9 @@ Object Merge is released under the open source BSD license. Contributions (code 
 
 ### Unmangaged Package
 
-You can go to one of the following URLs to install Object Merge as an unmanaged package:
-* Production: https://login.salesforce.com/packaging/installPackage.apexp?p0=04t0H0000019nSt
-* Sandbox: https://test.salesforce.com/packaging/installPackage.apexp?p0=04t0H0000019nSt
+You can go to one of the following links to install Object Merge as an unmanaged package:
+* <a href="https://login.salesforce.com/packaging/installPackage.apexp?p0=04t0H0000019npT" target="_blank" >Production</a>
+* <a href="https://test.salesforce.com/packaging/installPackage.apexp?p0=04t0H0000019npT" target="_blank" >Sandbox</a>
 
 ### Ant/Force.com Migration Tool
 You can fork this repository and deploy the unmanaged version of the code into a Salesforce org of your choice.
@@ -103,7 +103,15 @@ Once installed, you'll want to set up your first Object Merge Handler. To do so,
 
 ## Typical Use Cases
 
-* While this tool doesn't identify duplicates, Salesforce has great standard features for doing so. You can run a report to get duplicate IDs and then use data loader with the Object Merge Pair object to merge duplicates en masse.
+* While this tool doesn't identify duplicates, Salesforce has great standard features for doing so. You can run a report to get duplicate IDs and then use Data Loader with the Object Merge Pair object to merge duplicates en masse:
+    * Sort by Duplicate Record Set Name then in a manner to make your master records show up first
+    * Add columns for Master ID and Victim ID
+    * Copy the first ID to the Master ID field
+    * Use the Excel formulas in Example_Duplicate_Report.xlsx for the rest of the Master ID and Victim ID rows
+    * Copy/paste the Master ID and Victim ID columns into a new spreadsheet
+    * Sort by Victim ID and remove all rows with blank Victim IDs
+    * Save as a .csv
+    * Use Data Loader to insert these pairs into the Object Merge Pair object
 * If you'd like to provide a more intuitive UI for your users to merge certain types of objects, you can leverage custom lookup fields, workflow field updates, and record types to remove the need for users to copy and paste Salesforce IDs. Example for Contact:
 	* Create "Master Contact" and "Victim Contact" lookups
 	* Create a "Contact Merge Pair" Page Layout
