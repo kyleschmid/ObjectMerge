@@ -118,5 +118,5 @@ Once installed, you'll want to set up your first Object Merge Handler. To do so,
 	* Create a "Contact Merge" Record Type
 	* Assign the new Page Layout to the new Record Type
 	* Add the new lookup fields to the new Page Layout
-	* Create a Workflow Field Update on Object Merge Pair that populates the Master ID field with whatever is in the Master Contact field. Do the same for Victim ID and Victim Contact.
-	* Create a Workflow Rule that runs on create of Object Merge Pair and add these two Workflow Field Updates to it
+	* Create a Process Builder on Object Merge Pair that populates the Master ID field with whatever is in the Master Contact field. Do the same for Victim ID and Victim Contact.
+* If you have a license to DemandTools MassImpact, use this <a href="https://github.com/kyleschmid/ObjectMerge/blob/master/DemandTools_MassImpact_Set_Status_to_Retry.MIxml" target="_blank" >scenario</a> to set the statuses of all Object Merge Pair records with an "Error" status to "Retry" to attempt the merges again.

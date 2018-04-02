@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-16"?>
+<Mc18 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <ObjectType>Object_Merge_Pair__c</ObjectType>
+  <FieldsToShow>
+    <xs:schema id="NewDataSet" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+      <xs:element name="NewDataSet" msdata:IsDataSet="true" msdata:UseCurrentLocale="true">
+        <xs:complexType>
+          <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="FieldSelect">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="Field" type="xs:string" minOccurs="0" />
+                  <xs:element name="Label" type="xs:string" minOccurs="0" />
+                  <xs:element name="Order" type="xs:double" minOccurs="0" />
+                  <xs:element name="SoapType" type="xs:short" minOccurs="0" />
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:choice>
+        </xs:complexType>
+      </xs:element>
+    </xs:schema>
+    <diffgr:diffgram xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:diffgr="urn:schemas-microsoft-com:xml-diffgram-v1">
+      <NewDataSet>
+        <FieldSelect diffgr:id="FieldSelect1" msdata:rowOrder="0">
+          <Field>CreatedById</Field>
+          <Label>Created By ID</Label>
+          <Order>0</Order>
+          <SoapType>0</SoapType>
+        </FieldSelect>
+        <FieldSelect diffgr:id="FieldSelect3" msdata:rowOrder="1">
+          <Field>Status__c</Field>
+          <Label>Status</Label>
+          <Order>1</Order>
+          <SoapType>5</SoapType>
+        </FieldSelect>
+        <FieldSelect diffgr:id="FieldSelect4" msdata:rowOrder="2">
+          <Field>Merge_Date__c</Field>
+          <Label>Merge Date</Label>
+          <Order>2</Order>
+          <SoapType>7</SoapType>
+        </FieldSelect>
+        <FieldSelect diffgr:id="FieldSelect7" msdata:rowOrder="3">
+          <Field>Error_Reason__c</Field>
+          <Label>Error Reason</Label>
+          <Order>3</Order>
+          <SoapType>5</SoapType>
+        </FieldSelect>
+        <FieldSelect diffgr:id="FieldSelect8" msdata:rowOrder="4">
+          <Field>Name</Field>
+          <Label>Object Merge Pair Numer</Label>
+          <Order>4</Order>
+          <SoapType>5</SoapType>
+        </FieldSelect>
+        <FieldSelect diffgr:id="FieldSelect9" msdata:rowOrder="5">
+          <Field>OwnerId</Field>
+          <Label>Owner ID</Label>
+          <Order>5</Order>
+          <SoapType>0</SoapType>
+        </FieldSelect>
+        <FieldSelect diffgr:id="FieldSelect10" msdata:rowOrder="6">
+          <Field>IsDeleted</Field>
+          <Label>Deleted</Label>
+          <Order>6</Order>
+          <SoapType>2</SoapType>
+        </FieldSelect>
+      </NewDataSet>
+    </diffgr:diffgram>
+  </FieldsToShow>
+  <WhereDataSet>
+    <xs:schema id="NewDataSet" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+      <xs:element name="NewDataSet" msdata:IsDataSet="true" msdata:UseCurrentLocale="true">
+        <xs:complexType>
+          <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="WhereCond">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="Field" type="xs:string" minOccurs="0" />
+                  <xs:element name="Operator" type="xs:string" minOccurs="0" />
+                  <xs:element name="Value" type="xs:string" minOccurs="0" />
+                  <xs:element name="UseText" type="xs:boolean" minOccurs="0" />
+                  <xs:element name="GroupOrder" type="xs:int" minOccurs="0" />
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:choice>
+        </xs:complexType>
+      </xs:element>
+    </xs:schema>
+    <diffgr:diffgram xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:diffgr="urn:schemas-microsoft-com:xml-diffgram-v1">
+      <NewDataSet>
+        <WhereCond diffgr:id="WhereCond4" msdata:rowOrder="0">
+          <Field>status__c</Field>
+          <Operator>=</Operator>
+          <Value>Error</Value>
+          <UseText>true</UseText>
+          <GroupOrder>1</GroupOrder>
+        </WhereCond>
+        <WhereCond diffgr:id="WhereCond5" msdata:rowOrder="1">
+          <Field>error_reason__c</Field>
+          <Operator>Contains</Operator>
+          <Value>DML</Value>
+          <UseText>true</UseText>
+          <GroupOrder>1</GroupOrder>
+        </WhereCond>
+        <WhereCond diffgr:id="WhereCond6" msdata:rowOrder="2">
+          <Field>isdeleted</Field>
+          <Operator>=</Operator>
+          <Value>False</Value>
+          <UseText>false</UseText>
+          <GroupOrder>1</GroupOrder>
+        </WhereCond>
+      </NewDataSet>
+    </diffgr:diffgram>
+  </WhereDataSet>
+  <WhereExpertMode>false</WhereExpertMode>
+  <SetDataSet>
+    <xs:schema id="NewDataSet" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+      <xs:element name="NewDataSet" msdata:IsDataSet="true" msdata:UseCurrentLocale="true">
+        <xs:complexType>
+          <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="Object_Merge_Pair__c">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="Field" type="xs:string" minOccurs="0" />
+                  <xs:element name="SetType" type="xs:string" minOccurs="0" />
+                  <xs:element name="IsText" type="xs:boolean" minOccurs="0" />
+                  <xs:element name="SetValue" type="xs:string" minOccurs="0" />
+                  <xs:element name="WhereData" type="xs:string" minOccurs="0" />
+                  <xs:element name="UseWhereData" type="xs:boolean" minOccurs="0" />
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:choice>
+        </xs:complexType>
+      </xs:element>
+    </xs:schema>
+    <diffgr:diffgram xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:diffgr="urn:schemas-microsoft-com:xml-diffgram-v1">
+      <NewDataSet>
+        <Object_Merge_Pair__c diffgr:id="Object_Merge_Pair__c2" msdata:rowOrder="0">
+          <Field>Status__c</Field>
+          <SetType>Value</SetType>
+          <IsText>true</IsText>
+          <SetValue>Retry</SetValue>
+        </Object_Merge_Pair__c>
+      </NewDataSet>
+    </diffgr:diffgram>
+  </SetDataSet>
+  <UpdateBlank>false</UpdateBlank>
+  <UpdateUnchanged>false</UpdateUnchanged>
+  <ShortDescription />
+  <UseBulk>false</UseBulk>
+  <BulkBatchSize>5000</BulkBatchSize>
+  <BulkUseSerial>false</BulkUseSerial>
+  <BulkAllFile>false</BulkAllFile>
+  <BulkSuccessFile>true</BulkSuccessFile>
+  <BulkFailFile>true</BulkFailFile>
+</Mc18>
