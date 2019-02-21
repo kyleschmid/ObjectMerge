@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Parent_Handler__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>Handler for the parent object.</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Handler for the parent object.</inlineHelpText>
+    <label>Parent Handler</label>
+    <referenceTo>Object_Merge_Handler__c</referenceTo>
+    <relationshipLabel>Object Merge Handlers</relationshipLabel>
+    <relationshipName>Object_Merge_Handlers</relationshipName>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

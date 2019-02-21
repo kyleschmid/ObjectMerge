@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Object_Lookup_Field_API_Name__c</fullName>
+    <description>API name of the field on the related object that looks up to Object.</description>
+    <externalId>false</externalId>
+    <inlineHelpText>API name of the field on the related object that looks up to Object.</inlineHelpText>
+    <label>Object Lookup Field API Name</label>
+    <length>40</length>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

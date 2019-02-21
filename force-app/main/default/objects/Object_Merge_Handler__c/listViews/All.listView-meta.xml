@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>All</fullName>
+    <columns>NAME</columns>
+    <columns>RECORDTYPE</columns>
+    <columns>Parent_Handler__c</columns>
+    <columns>Object_Lookup_Field_API_Name__c</columns>
+    <columns>Child_Relationship_Name__c</columns>
+    <columns>Standard_Action__c</columns>
+    <columns>Merge_Action__c</columns>
+    <columns>Clone_Reparented_Victim__c</columns>
+    <columns>Order_of_Execution__c</columns>
+    <columns>Active__c</columns>
+    <filterScope>Everything</filterScope>
+    <label>All</label>
+</ListView>

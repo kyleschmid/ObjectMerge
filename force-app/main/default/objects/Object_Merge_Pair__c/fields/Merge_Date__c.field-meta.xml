@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Merge_Date__c</fullName>
+    <description>Date/time the merge was attempted/completed.</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Date/time the merge was attempted/completed.</inlineHelpText>
+    <label>Merge Date</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>DateTime</type>
+</CustomField>

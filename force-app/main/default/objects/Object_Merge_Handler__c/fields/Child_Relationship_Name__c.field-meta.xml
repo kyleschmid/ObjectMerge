@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Child_Relationship_Name__c</fullName>
+    <description>Name of the child relationship. This can be found in the lookup field metadata or by using Workbench. Please append &quot;__r&quot; for custom lookup fields.</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Name of the child relationship. This can be found in the lookup field metadata or by using Workbench. Please append &quot;__r&quot; for custom lookup fields.</inlineHelpText>
+    <label>Child Relationship Name</label>
+    <length>80</length>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

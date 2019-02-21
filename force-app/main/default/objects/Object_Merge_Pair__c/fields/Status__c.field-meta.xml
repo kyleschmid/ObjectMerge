@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Status__c</fullName>
+    <description>Status of the merge operation.</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Status of the merge operation.</inlineHelpText>
+    <label>Status</label>
+    <picklist>
+        <picklistValues>
+            <fullName>Merged</fullName>
+            <default>false</default>
+        </picklistValues>
+        <picklistValues>
+            <fullName>Error</fullName>
+            <default>false</default>
+        </picklistValues>
+        <picklistValues>
+            <fullName>Retry</fullName>
+            <default>false</default>
+        </picklistValues>
+        <restrictedPicklist>true</restrictedPicklist>
+        <sorted>false</sorted>
+    </picklist>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+</CustomField>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Standard_Action__c</fullName>
+    <description>Action to be performed on the victim record when a duplicate is not found.</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Action to be performed on the victim record when a duplicate is not found.</inlineHelpText>
+    <label>Standard Action</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Move Victim</fullName>
+                <default>false</default>
+            </value>
+            <value>
+                <fullName>Clone Victim</fullName>
+                <default>false</default>
+            </value>
+            <value>
+                <fullName>Delete Victim</fullName>
+                <default>false</default>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

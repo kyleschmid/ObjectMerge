@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Clone_Reparented_Victim__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>If checked, a victim record that would normally be reparented would instead be cloned. This is useful for master-detail relationships that don&#39;t allow reparenting.</description>
+    <externalId>false</externalId>
+    <inlineHelpText>If checked, a victim record that would normally be reparented would instead be cloned. This is useful for master-detail relationships that don&#39;t allow reparenting.</inlineHelpText>
+    <label>Clone Reparented Victim</label>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

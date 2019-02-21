@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RecordType xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Child_Handler</fullName>
+    <active>true</active>
+    <description>Handler for a child object.</description>
+    <label>Child Handler</label>
+    <picklistValues>
+        <picklist>Merge_Action__c</picklist>
+        <values>
+            <fullName>Delete Duplicate</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Keep Last Modified</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Keep Master</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Keep Newest Created</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Keep Oldest Created</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Standard_Action__c</picklist>
+        <values>
+            <fullName>Clone Victim</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Delete Victim</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Move Victim</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+</RecordType>

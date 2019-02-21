@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Merged</fullName>
+    <columns>NAME</columns>
+    <columns>Master_ID__c</columns>
+    <columns>Victim_ID__c</columns>
+    <columns>Merge_Date__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Status__c</field>
+        <operation>equals</operation>
+        <value>Merged</value>
+    </filters>
+    <label>Merged</label>
+</ListView>

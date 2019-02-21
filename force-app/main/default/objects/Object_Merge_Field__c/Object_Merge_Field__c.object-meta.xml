@@ -56,41 +56,6 @@
     <enableSearch>false</enableSearch>
     <enableSharing>false</enableSharing>
     <enableStreamingApi>false</enableStreamingApi>
-    <fields>
-        <fullName>Active__c</fullName>
-        <defaultValue>true</defaultValue>
-        <description>If checked, this field will be included in processing.</description>
-        <externalId>false</externalId>
-        <inlineHelpText>If checked, this field will be included in processing.</inlineHelpText>
-        <label>Active</label>
-        <trackTrending>false</trackTrending>
-        <type>Checkbox</type>
-    </fields>
-    <fields>
-        <fullName>Object_Merge_Handler__c</fullName>
-        <description>Handler for this field.</description>
-        <externalId>false</externalId>
-        <inlineHelpText>Handler for this field.</inlineHelpText>
-        <label>Object Merge Handler</label>
-        <referenceTo>Object_Merge_Handler__c</referenceTo>
-        <relationshipLabel>Object Merge Fields</relationshipLabel>
-        <relationshipName>Object_Merge_Fields</relationshipName>
-        <relationshipOrder>0</relationshipOrder>
-        <reparentableMasterDetail>true</reparentableMasterDetail>
-        <trackTrending>false</trackTrending>
-        <type>MasterDetail</type>
-        <writeRequiresMasterRead>false</writeRequiresMasterRead>
-    </fields>
-    <fields>
-        <fullName>Use_for_Matching__c</fullName>
-        <defaultValue>false</defaultValue>
-        <description>If checked, this field will be used to match to duplicate related records on the master record.</description>
-        <externalId>false</externalId>
-        <inlineHelpText>If checked, this field will be used to match to duplicate related records on the master record.</inlineHelpText>
-        <label>Use for Matching</label>
-        <trackTrending>false</trackTrending>
-        <type>Checkbox</type>
-    </fields>
     <label>Object Merge Field</label>
     <nameField>
         <label>Field API Name</label>
