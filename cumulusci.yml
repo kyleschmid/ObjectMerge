@@ -1,0 +1,7 @@
+project:
+    name: ObjectMerge
+    package:
+        name:  ObjectMerge
+        api_version: '45'
+
+
