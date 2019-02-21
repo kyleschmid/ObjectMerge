@@ -5,22 +5,24 @@
     <externalId>false</externalId>
     <inlineHelpText>Status of the merge operation.</inlineHelpText>
     <label>Status</label>
-    <picklist>
-        <picklistValues>
-            <fullName>Merged</fullName>
-            <default>false</default>
-        </picklistValues>
-        <picklistValues>
-            <fullName>Error</fullName>
-            <default>false</default>
-        </picklistValues>
-        <picklistValues>
-            <fullName>Retry</fullName>
-            <default>false</default>
-        </picklistValues>
-        <restrictedPicklist>true</restrictedPicklist>
-        <sorted>false</sorted>
-    </picklist>
+    <valueSet>
+        <valueSetDefinition>
+            <value>
+                <fullName>Merged</fullName>
+                <default>false</default>
+            </value>
+            <value>
+                <fullName>Error</fullName>
+                <default>false</default>
+            </value>
+            <value>
+                <fullName>Retry</fullName>
+                <default>false</default>
+            </value>
+            <sorted>false</sorted>
+        </valueSetDefinition>
+        <restricted>true</restricted>
+    </valueSet>
     <required>false</required>
     <trackTrending>false</trackTrending>
     <type>Picklist</type>

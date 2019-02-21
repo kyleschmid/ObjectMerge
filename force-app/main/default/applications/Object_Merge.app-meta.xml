@@ -3,7 +3,7 @@
     <defaultLandingTab>standard-home</defaultLandingTab>
     <description>Object merge administration.</description>
     <label>Object Merge</label>
-    <tab>standard-Contact</tab>
-    <tab>Object_Merge_Handler__c</tab>
-    <tab>Object_Merge_Pair__c</tab>
+    <tabs>standard-Contact</tabs>
+    <tabs>Object_Merge_Handler__c</tabs>
+    <tabs>Object_Merge_Pair__c</tabs>
 </CustomApplication>
