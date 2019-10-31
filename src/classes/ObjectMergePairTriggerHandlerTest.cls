@@ -1,7 +1,7 @@
 /*
     BSD 3-Clause License
     
-    Copyright (c) 2017, Kyle Schmid, Huron Consulting Group
+    Copyright (c) 2019, Kyle Schmid, Huron Consulting Group
     All rights reserved.
     
     Redistribution and use in source and binary forms, with or without
@@ -261,10 +261,6 @@ private class ObjectMergePairTriggerHandlerTest {
     @isTest
     static void test_errors_1() {
         
-        Object_Merge_Field__c f = [SELECT Id FROM Object_Merge_Field__c WHERE Object_Merge_Handler__r.Name = :'Contact' LIMIT 1];
-        f.Name = 'not_a_field';
-        update f;
-        
         Id a1Id = [SELECT Id FROM Account WHERE Name = :'test1'].Id;
         Id a2Id = [SELECT Id FROM Account WHERE Name = :'test2'].Id;
         Id c1Id = [SELECT Id FROM Contact WHERE LastName = :'test1'].Id;
@@ -272,23 +268,20 @@ private class ObjectMergePairTriggerHandlerTest {
         Object_Merge_Pair__c p1 = new Object_Merge_Pair__c(Status__c = 'Retry', Master_ID__c = a1Id, Victim_ID__c = a2Id);
         Object_Merge_Pair__c p2 = new Object_Merge_Pair__c(Master_ID__c = a1Id, Victim_ID__c = c1Id);
         Object_Merge_Pair__c p3 = new Object_Merge_Pair__c(Master_ID__c = '00T0H00003uKOXt', Victim_ID__c = '00T0H00003uKOXt');
-        Object_Merge_Pair__c p4 = new Object_Merge_Pair__c(Master_ID__c = a1Id, Victim_ID__c = a2Id);
         
         Test.startTest();
         
-        insert new List<Object_Merge_Pair__c>{p1, p2, p3, p4};
+        insert new List<Object_Merge_Pair__c>{p1, p2, p3};
         
         Test.stopTest();
         
         p1 = [SELECT Id, Error_Reason__c FROM Object_Merge_Pair__c WHERE Id = :p1.Id];
         p2 = [SELECT Id, Error_Reason__c FROM Object_Merge_Pair__c WHERE Id = :p2.Id];
         p3 = [SELECT Id, Error_Reason__c FROM Object_Merge_Pair__c WHERE Id = :p3.Id];
-        p4 = [SELECT Id, Error_Reason__c FROM Object_Merge_Pair__c WHERE Id = :p4.Id];
         
         System.assertEquals('Invalid status', p1.Error_Reason__c);
         System.assertEquals('Invalid Master/Victim ID pair', p2.Error_Reason__c);
         System.assertEquals('Object Merge Handler not found', p3.Error_Reason__c);
-        System.assertEquals('Error running query', p4.Error_Reason__c);
     }
     
     @isTest
@@ -362,6 +355,34 @@ private class ObjectMergePairTriggerHandlerTest {
         p1 = [SELECT Id, Error_Reason__c FROM Object_Merge_Pair__c WHERE Id = :p1.Id];
         
         System.assertEquals('Error performing DML', p1.Error_Reason__c);
+    }
+    
+    @isTest
+    static void test_errors_5() {
+        
+        delete [SELECT Id FROM Object_Merge_Handler__c WHERE Name = :'Account'];
+        
+        Id parentHandlerId = Object_Merge_Handler__c.SObjectType.getDescribe().getRecordTypeInfosByDeveloperName().get('Parent_Handler').getRecordTypeId();
+        
+        Object_Merge_Handler__c h = [SELECT Id FROM Object_Merge_Handler__c WHERE Name = :'Contact'];
+        h.Name = 'Account';
+        h.RecordTypeId = parentHandlerId;
+        update h;
+        
+        Id a1Id = [SELECT Id FROM Account WHERE Name = :'test1'].Id;
+        Id a2Id = [SELECT Id FROM Account WHERE Name = :'test2'].Id;
+        
+        Object_Merge_Pair__c p1 = new Object_Merge_Pair__c(Master_ID__c = a1Id, Victim_ID__c = a2Id);
+        
+        Test.startTest();
+        
+        insert p1;
+        
+        Test.stopTest();
+        
+        p1 = [SELECT Id, Error_Reason__c FROM Object_Merge_Pair__c WHERE Id = :p1.Id];
+        
+        System.assertEquals('Error running query', p1.Error_Reason__c);
     }
     
     @testSetup

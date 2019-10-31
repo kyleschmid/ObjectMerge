@@ -7,6 +7,8 @@
     <types>
         <members>ObjectMergePairTriggerHandler</members>
         <members>ObjectMergePairTriggerHandlerTest</members>
+        <members>ObjectMergeValidator</members>
+        <members>ObjectMergeValidatorTest</members>
         <name>ApexClass</name>
     </types>
     <types>
@@ -28,8 +30,10 @@
         <name>CustomTab</name>
     </types>
     <types>
+        <members>ObjectMergeFieldTrigger</members>
+        <members>ObjectMergeHandlerTrigger</members>
         <members>ObjectMergePairTrigger</members>
         <name>ApexTrigger</name>
     </types>
-    <version>38.0</version>
+    <version>46.0</version>
 </Package>
