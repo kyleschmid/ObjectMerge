@@ -259,6 +259,35 @@ private class ObjectMergePairTriggerHandlerTest {
     }
     
     @isTest
+    static void test_no_victim_children() {
+        
+        Id a1Id = [SELECT Id FROM Account WHERE Name = :'test1'].Id;
+        Id a2Id = [SELECT Id FROM Account WHERE Name = :'test2'].Id;
+        Id c1Id = [SELECT Id FROM Contact WHERE LastName = :'test1'].Id;
+        
+        delete [SELECT Id FROM Contact WHERE AccountId = :a2Id];
+        
+        Object_Merge_Pair__c p = new Object_Merge_Pair__c(Master_ID__c = a1Id, Victim_ID__c = a2Id);
+        
+        Test.startTest();
+        
+        insert p;
+        
+        Test.stopTest();
+        
+        Account a1 = [SELECT Id, Name, Website FROM Account WHERE Id = :a1Id];
+        System.assertEquals('test1', a1.Name);
+        System.assertEquals('www.test2.com', a1.Website);
+        
+        System.assert([SELECT Id FROM Account WHERE Id = :a2Id].isEmpty());
+        
+        Contact c1 = [SELECT Id, AccountId, LastName, Email FROM Contact WHERE Id = :c1Id];
+        System.assertEquals(a1Id, c1.AccountId);
+        System.assertEquals('test1', c1.LastName);
+        System.assertEquals(null, c1.Email);
+    }
+    
+    @isTest
     static void test_errors_1() {
         
         Id a1Id = [SELECT Id FROM Account WHERE Name = :'test1'].Id;
@@ -397,8 +426,8 @@ private class ObjectMergePairTriggerHandlerTest {
         Contact c3 = new Contact(AccountId = a2.Id, LastName = 'test3', FirstName = 'not_test');
         insert new List<Contact>{c1, c2, c3};
         
-        Id pId = Schema.SObjectType.Object_Merge_Handler__c.getRecordTypeInfosByName().get('Parent Handler').getRecordTypeId();
-        Id cId = Schema.SObjectType.Object_Merge_Handler__c.getRecordTypeInfosByName().get('Child Handler').getRecordTypeId();
+        Id pId = Schema.SObjectType.Object_Merge_Handler__c.getRecordTypeInfosByDeveloperName().get('Parent_Handler').getRecordTypeId();
+        Id cId = Schema.SObjectType.Object_Merge_Handler__c.getRecordTypeInfosByDeveloperName().get('Child_Handler').getRecordTypeId();
         
         Object_Merge_Handler__c h1 = new Object_Merge_Handler__c(Name = 'Account', Active__c = true, RecordTypeId = pId);
         insert h1;

@@ -1,7 +1,7 @@
 /*
     BSD 3-Clause License
     
-    Copyright (c) 2019, Kyle Schmid, Huron Consulting Group
+    Copyright (c) 2017, Kyle Schmid, Huron Consulting Group
     All rights reserved.
     
     Redistribution and use in source and binary forms, with or without
@@ -31,6 +31,8 @@
 */
 public class ObjectMergePairTriggerHandler {
 	
+    private static final Map<String, SObjectType> GLOBAL_DESCRIBE = Schema.getGlobalDescribe();
+    
     public static void MergeObjects(List<Object_Merge_Pair__c> pairs, Boolean isUpdate) {
         
         // Get set of object prefixes and check for valid status/IDs
@@ -62,7 +64,7 @@ public class ObjectMergePairTriggerHandler {
         
         // Get prefix-name map
         Map<String, String> prefixMap = new Map<String, String>();
-        for (Schema.SObjectType t:Schema.getGlobalDescribe().values()) {
+        for (Schema.SObjectType t:GLOBAL_DESCRIBE.values()) {
             Schema.DescribeSObjectResult d = t.getDescribe();
             if (prefixes.contains(d.getKeyPrefix()))
                 prefixMap.put(d.getKeyPrefix(), d.getName().toLowerCase());
@@ -84,8 +86,14 @@ public class ObjectMergePairTriggerHandler {
         
         // Get map of handlers grouped by object name
         Map<String, Object_Merge_Handler__c> handlers = new Map<String, Object_Merge_Handler__c>();
-        for (Object_Merge_Handler__c h:[SELECT Id, Name, (SELECT Id, Name, Child_Relationship_Name__c, Object_Lookup_Field_API_Name__c, Standard_Action__c, Merge_Action__c, Clone_Reparented_Victim__c FROM Object_Merge_Handlers__r WHERE Active__c = :true ORDER BY Order_of_Execution__c ASC NULLS LAST) FROM Object_Merge_Handler__c WHERE RecordType.DeveloperName = :'Parent_Handler' AND Active__c = :true AND Name IN :pairMap.keySet()])
+        Map<Id, List<Object_Merge_Handler__c>> childHandlers = new Map<Id, List<Object_Merge_Handler__c>>();
+        for (Object_Merge_Handler__c h:[SELECT Id, Name, (SELECT Id, Name, Child_Relationship_Name__c, Object_Lookup_Field_API_Name__c, Standard_Action__c, Merge_Action__c, Clone_Reparented_Victim__c FROM Object_Merge_Handlers__r WHERE Active__c = :true ORDER BY Order_of_Execution__c ASC NULLS LAST) FROM Object_Merge_Handler__c WHERE RecordType.DeveloperName = :'Parent_Handler' AND Active__c = :true AND Name IN :pairMap.keySet()]) {
             handlers.put(h.Name.toLowerCase(), h);
+            List<Object_Merge_Handler__c> cHandlers = new List<Object_Merge_Handler__c>();
+            for (Object_Merge_Handler__c ch:h.Object_Merge_Handlers__r)
+                cHandlers.add(ch);
+            childHandlers.put(h.Id, cHandlers);
+        }
         
         // Get maps of fields and matching fields grouped by parent id
         Map<Id, List<Object_Merge_Field__c>> fields = new Map<Id, List<Object_Merge_Field__c>>();
@@ -115,12 +123,12 @@ public class ObjectMergePairTriggerHandler {
             }
             
             // Perform the merge
-            doMerge(pairMap.get(objectName), handlers.get(objectName), fields, matchingFields);
+            doMerge(pairMap.get(objectName), handlers.get(objectName), childHandlers.get(handlers.get(ObjectName).Id), fields, matchingFields);
         }
     }
 	
-	// Method to perform merge of a list of pairs of the same object type
-    private static void doMerge(List<Object_Merge_Pair__c> pairs, Object_Merge_Handler__c handler, Map<Id, List<Object_Merge_Field__c>> fields, Map<Id, List<Object_Merge_Field__c>> matchingFields) {
+	// Method to perform merge of a list of pairs of the same object type    
+    private static void doMerge(List<Object_Merge_Pair__c> pairs, Object_Merge_Handler__c handler, List<Object_Merge_Handler__c> childHandlers, Map<Id, List<Object_Merge_Field__c>> fields, Map<Id, List<Object_Merge_Field__c>> matchingFields) {
         
         // Get set of parent record ids
         Set<Id> parentIds = new Set<Id>();
@@ -131,12 +139,25 @@ public class ObjectMergePairTriggerHandler {
         }
         
         // Query parent records
-        Map<Id, SObject> parents;
+        Map<Id, SObject> parents = new Map<Id, SObject>();
         try {
-            parents = new Map<Id, SObject>(Database.query(getQuery(handler, fields)));
+            for (SObject so:Database.query(getQuery(handler, childHandlers, fields)))
+                parents.put(so.Id, so);
         } catch (Exception e) {
             addError(pairs, 'Error running query');
             return;
+        }
+        
+        // Get map of children records
+        Map<String, Map<Id, List<SObject>>> children = new Map<String, Map<Id, List<SObject>>>();
+        for (Object_Merge_Handler__c h:childHandlers) {
+            children.put(h.Child_Relationship_Name__c, new Map<Id, List<SObject>>());
+            for (SObject p:parents.values()) {
+                List<SObject> soList = new List<SObject>();
+                for (SObject so:p.getSObjects(h.Child_Relationship_Name__c))
+                    soList.add(so);
+                children.get(h.Child_Relationship_Name__c).put(p.Id, soList);
+            }
         }
         
         // Lists of records to perform DML on
@@ -165,16 +186,20 @@ public class ObjectMergePairTriggerHandler {
             recordsToDelete.add(victim);
             
             // Handle child records
-            for (Object_Merge_Handler__c h:handler.Object_Merge_Handlers__r) {
+            for (Object_Merge_Handler__c h:childHandlers) {
+                
+                // Exit if no victim children to deal with
+                if (children.get(h.Child_Relationship_Name__c).get(victim.Id).isEmpty())
+                    continue;
                 
                 // Get map of key for master children and corresponding children
                 Map<String, SObject> masterChildren = new Map<String, SObject>();
-                if (matchingFields.containsKey(h.Id))
-                    for (SObject child:master.getSObjects(h.Child_Relationship_Name__c))
-                    masterChildren.put(getChildCloneKey(matchingFields.get(h.Id), child), child);
+                if (matchingFields.containsKey(h.Id) && children.get(h.Child_Relationship_Name__c).get(master.Id) != null)
+                    for (SObject child:children.get(h.Child_Relationship_Name__c).get(master.Id))
+                    	masterChildren.put(getChildCloneKey(matchingFields.get(h.Id), child), child);
                 
                 // Loop over victim children and handle
-                for (SObject child:victim.getSObjects(h.Child_Relationship_Name__c)) {
+                for (SObject child:children.get(h.Child_Relationship_Name__c).get(victim.Id)) {
                     
                     // String key to match to master children with
                     String key = getChildCloneKey(matchingFields.get(h.Id), child);
@@ -261,20 +286,20 @@ public class ObjectMergePairTriggerHandler {
         System.Savepoint sp = Database.setSavepoint(); // Set savepoint to rollback on error;
         try {
             
-            // Update records
-            for (List<SObject> objects:groupSObjects(recordsToUpdateList, handler))
-                update objects;
+            // Get maps of records to updates, insert, and delete
+            Map<Schema.SObjectType, List<SObject>> recordsToUpdateMap = groupSObjects(recordsToUpdateList, handler);
+            Map<Schema.SObjectType, List<SObject>> recordsToInsertMap = groupSObjects(recordsToInsert, handler);
+            Map<Schema.SObjectType, List<SObject>> recordsToDeleteMap = groupSObjects(recordsToDeleteList, handler);
             
-            // Insert records
-            for (List<SObject> objects:groupSObjects(recordsToInsert, handler))
-                insert objects;
+            // Perform DML on child records
+            for (Object_Merge_Handler__c h:childHandlers) {
+                Schema.SObjectType token = GLOBAL_DESCRIBE.get(h.Name);
+                performDML(recordsToUpdateMap.get(token), recordsToInsertMap.get(token), recordsToDeleteMap.get(token));
+            }
             
-            // Delete records and handle ENTITY_IS_DELETED error if records got deleted due to other DML
-            for (List<SObject> objects:groupSObjects(recordsToDeleteList, handler))
-                for (Database.DeleteResult dr:Database.delete(objects, false))
-                    for (Database.Error er:dr.getErrors())
-                        if (er.getStatusCode() != StatusCode.ENTITY_IS_DELETED)
-                            throw new ObjectMergePairException();
+            // Perform DML on parent records
+            Schema.SObjectType parentToken = GLOBAL_DESCRIBE.get(handler.Name);
+            performDML(recordsToUpdateMap.get(parentToken), null, recordsToDeleteMap.get(parentToken));
             
         } catch (Exception e) {
             Database.rollback(sp);
@@ -348,14 +373,14 @@ public class ObjectMergePairTriggerHandler {
     }
     
     // Builds and returns query
-    private static String getQuery(Object_Merge_Handler__c handler, Map<Id, List<Object_Merge_Field__c>> fields) {
+    private static String getQuery(Object_Merge_Handler__c handler, List<Object_Merge_Handler__c> childHandlers, Map<Id, List<Object_Merge_Field__c>> fields) {
         
         // Start query with parent fields
         String query = 'SELECT Id';
         query += queryFields(fields.get(handler.Id));
         
         // Add to query with child objects
-        for (Object_Merge_Handler__c h:handler.Object_Merge_Handlers__r) {
+        for (Object_Merge_Handler__c h:childHandlers) {
             
             query += ', (SELECT Id, ' + h.Object_Lookup_Field_API_Name__c;
             query += queryFields(fields.get(h.Id));
@@ -396,23 +421,38 @@ public class ObjectMergePairTriggerHandler {
         return ret;
     }
     
-    // Return List of Lists of SObjects, grouped by type with parents at end
-    private static List<List<SObject>> groupSObjects(List<SObject> objects, Object_Merge_Handler__c handler) {
-        Schema.SObjectType parentType = Schema.getGlobalDescribe().get(handler.Name);
-        List<SObject> parents = new List<SObject>();
+    // Return Map of Lists of SObjects with SObjectType as the key
+    private static Map<Schema.SObjectType, List<SObject>> groupSObjects(List<SObject> objects, Object_Merge_Handler__c handler) {
+        
         Map<Schema.SObjectType, List<SObject>> objectMap = new Map<Schema.SObjectType, List<SObject>>();
         for (SObject so:objects) {
-            if (so.getSObjectType() == parentType) {
-                parents.add(so);
-            } else {
-                if (!objectMap.containsKey(so.getSObjectType()))
-                    objectMap.put(so.getSObjectType(), new List<SObject>());
-                objectMap.get(so.getSObjectType()).add(so);
-            }
+            
+            if (!objectMap.containsKey(so.getSObjectType()))
+                objectMap.put(so.getSObjectType(), new List<SObject>());
+            
+            objectMap.get(so.getSObjectType()).add(so);
         }
-        List<List<SObject>> ret = objectMap.values();
-        ret.add(parents);
-        return ret;
+        
+        return objectMap;
+    }
+    
+    // Perform DML on SObjects
+    private static void performDML(List<SObject> recordsToUpdate, List<SObject> recordsToInsert, List<SObject> recordsToDelete) {
+        
+        // Update records
+        if (recordsToUpdate != null)
+            update recordsToUpdate;
+        
+        // Insert records
+        if (recordsToInsert != null)
+            insert recordsToInsert;
+        
+        // Delete records and handle ENTITY_IS_DELETED error if records got deleted due to other DML
+        if (recordsToDelete != null)
+        	for (Database.DeleteResult dr:Database.delete(recordsToDelete, false))
+            	for (Database.Error er:dr.getErrors())
+            		if (er.getStatusCode() != StatusCode.ENTITY_IS_DELETED)
+            			throw new ObjectMergePairException();
     }
     
     public class ObjectMergePairException extends Exception {}
