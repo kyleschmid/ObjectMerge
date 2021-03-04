@@ -1,7 +1,7 @@
 /*
     BSD 3-Clause License
     
-    Copyright (c) 2019, Kyle Schmid, Huron Consulting Group
+    Copyright (c) 2021, Kyle Schmid, Huron Consulting Group
     All rights reserved.
     
     Redistribution and use in source and binary forms, with or without
@@ -30,5 +30,6 @@
 	OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 trigger ObjectMergeHandlerTrigger on Object_Merge_Handler__c (before insert, before update) {
+    
     ObjectMergeValidator.validateObjectMergeHandlers(Trigger.new);
 }

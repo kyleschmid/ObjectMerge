@@ -19,7 +19,9 @@
 
     <target name="deploy">
       <sf:deploy username="${sf.username}" password="${sf.password}" sessionId="${sf.sessionId}" serverurl="${sf.serverurl}" maxPoll="${sf.maxPoll}" deployRoot="src" testLevel="RunSpecifiedTests" rollbackOnError="true">
+         <runTest>ObjectMergeDuplicateManagerTest</runTest>
          <runTest>ObjectMergePairTriggerHandlerTest</runTest>
+         <runTest>ObjectMergeValidatorTest</runTest>
       </sf:deploy>
     </target>
   

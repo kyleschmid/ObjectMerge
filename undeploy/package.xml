@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>ObjectMerge</fullName>
-    <version>46.0</version>
+    <version>51.0</version>
 </Package>

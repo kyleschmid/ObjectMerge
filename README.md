@@ -8,13 +8,13 @@ This solution allows you to specify merging rules for parent objects, their fiel
 
 ## Installation
 
-Object Merge is released under the open source BSD license. Contributions (code and otherwise) are welcome and encouraged. You can install in one of two ways:
+ObjectMerge is released under the open source BSD license. Contributions (code and otherwise) are welcome and encouraged. You can install in one of two ways:
 
 ### Unmangaged Package
 
 You can go to one of the following links to install Object Merge as an unmanaged package:
-* <a href="https://login.salesforce.com/packaging/installPackage.apexp?p0=04t0H000000tJrm" target="_blank" >Production</a>
-* <a href="https://test.salesforce.com/packaging/installPackage.apexp?p0=04t0H000000tJrm" target="_blank" >Sandbox</a>
+* <a href="https://login.salesforce.com/packaging/installPackage.apexp?p0=04t0H0000019tja" target="_blank" >Production</a>
+* <a href="https://test.salesforce.com/packaging/installPackage.apexp?p0=04t0H0000019tja" target="_blank" >Sandbox</a>
 
 ### Ant/Force.com Migration Tool
 You can fork this repository and deploy the unmanaged version of the code into a Salesforce org of your choice.
@@ -63,7 +63,7 @@ $ ant undeploy
 
 * Erase the Object Merge Handler, Object Merge Field, and Object Merge Pair objects under Setup>Create>Custom Objects>Deleted Objects
 
-## Using Object Merge
+## Using ObjectMerge
 
 Once installed, you'll want to set up your first Object Merge Handler. To do so, follow these instructions:
 
@@ -78,7 +78,6 @@ Once installed, you'll want to set up your first Object Merge Handler. To do so,
   	* Select "Child Handler" for the Record Type
   	* Populate the Object API Name of the field with the API name of the object related to the parent object that you want to merge (e.g. "Contact")
   	* Populate the Object Lookup Field API Name with the API name of the field that looks-up to the parent object (e.g. "AccountId")
-  	* Populate the Child Relationship Name with the API name of the child relationship (e.g. "Contacts"). This can be found by using Workbench, Google, or going to the properties of a custom lookup field, copying what is in the Child Relationship Name field, and appending "\__r"
     * Populate the Order of Execution field with the order in which you want this object to be processed relative to other child objects. This is not required.
   	* Populate the Standard Action field with what you want to happen to the related object record when a duplicate is not found on the master:
     	* Move Victim: Victim record will be re-parented to master
@@ -103,20 +102,22 @@ Once installed, you'll want to set up your first Object Merge Handler. To do so,
 
 ## Typical Use Cases
 
-* While this tool doesn't identify duplicates, Salesforce has great standard features for doing so. You can run a report to get duplicate IDs and then use Data Loader with the Object Merge Pair object to merge duplicates en masse:
-    * Sort by Duplicate Record Set Name then in a manner to make your master records show up first
-    * Add columns for Master ID and Victim ID
-    * Copy the first ID to the Master ID field
-    * Use the Excel formulas in Example_Duplicate_Report.xlsx for the rest of the Master ID and Victim ID rows
-    * Copy/paste the Master ID and Victim ID columns into a new spreadsheet
-    * Sort by Victim ID and remove all rows with blank Victim IDs
-    * Save as a .csv
-    * Use Data Loader to insert these pairs into the Object Merge Pair object
-* If you'd like to provide a more intuitive UI for your users to merge certain types of objects, you can leverage custom lookup fields, workflow field updates, and record types to remove the need for users to copy and paste Salesforce IDs. Example for Contact:
-	* Create "Master Contact" and "Victim Contact" lookups
-	* Create a "Contact Merge Pair" Page Layout
-	* Create a "Contact Merge" Record Type
-	* Assign the new Page Layout to the new Record Type
-	* Add the new lookup fields to the new Page Layout
-	* Create a Process Builder on Object Merge Pair that populates the Master ID field with whatever is in the Master Contact field. Do the same for Victim ID and Victim Contact.
-* If you have a license to DemandTools MassImpact, use this <a href="https://github.com/kyleschmid/ObjectMerge/blob/master/DemandTools_MassImpact_Set_Status_to_Retry.MIxml" target="_blank" >scenario</a> to set the statuses of all Object Merge Pair records with an "Error" status to "Retry" to attempt the merges again.
+### Data Loader
+
+While this tool doesn't identify duplicates, Salesforce has great standard features for doing so. You can run a report to get duplicate IDs and then use Data Loader with the Object Merge Pair object to merge duplicates en masse:
+* Sort by Duplicate Record Set Name then in a manner to make your master records show up first
+* Add columns for Master ID and Victim ID
+* Copy the first ID to the Master ID field
+* Use the Excel formulas in Example_Duplicate_Report.xlsx for the rest of the Master ID and Victim ID rows
+* Copy/paste the Master ID and Victim ID columns into a new spreadsheet
+* Sort by Victim ID and remove all rows with blank Victim IDs
+* Save as a .csv
+* Use Data Loader to insert these pairs into the Object Merge Pair object
+
+## ObjectMerge Duplicate Manager
+
+The ObjectMerge Duplicate Manager is a Lightning Component that allows users to merge records straight from the record detail page. When included on a Lightning Record Page, the component will find Duplicate Record Items that are part of any Duplicate Record Set that includes the current record (these get generated by the "Report" option with Salesforce Duplicate Rules). If duplicates are found, users can merge two or more records using the component. You can control which fields display in the component's table by including a comma-seperated list of field API names in the "Fields" attribute of the component within the Lightning Record Page editor.
+
+## DemandTools
+
+If you have a license to DemandTools MassImpact, use this <a href="https://github.com/kyleschmid/ObjectMerge/blob/master/DemandTools_MassImpact_Set_Status_to_Retry.MIxml" target="_blank" >scenario</a> to set the statuses of all Object Merge Pair records with an "Error" status to "Retry" to attempt the merges again.

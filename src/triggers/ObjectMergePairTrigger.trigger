@@ -1,7 +1,7 @@
 /*
     BSD 3-Clause License
     
-    Copyright (c) 2019, Kyle Schmid, Huron Consulting Group
+    Copyright (c) 2021, Kyle Schmid, Huron Consulting Group
     All rights reserved.
     
     Redistribution and use in source and binary forms, with or without
@@ -29,6 +29,14 @@
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
     OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-trigger ObjectMergePairTrigger on Object_Merge_Pair__c (before insert, before update) {
-	ObjectMergePairTriggerHandler.MergeObjects(Trigger.new, Trigger.isUpdate);
+trigger ObjectMergePairTrigger on Object_Merge_Pair__c (before insert, before update, after insert, after update) {
+    
+    if (Trigger.isBefore) {
+        
+		ObjectMergePairTriggerHandler.mergeRecords(Trigger.new);
+        
+    } else {
+        
+        ObjectMergePairTriggerHandler.handleUsers(Trigger.new);
+    }
 }

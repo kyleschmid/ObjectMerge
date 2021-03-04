@@ -1,0 +1,39 @@
+<aura:component implements="flexipage:availableForRecordHome,force:hasRecordId" controller="ObjectMergeDuplicateManagerController" access="global" >
+	
+    <aura:attribute name="showSpinner" type="Boolean" default="false" />
+    <aura:attribute name="fields" type="String" default="" />
+    <aura:attribute name="columns" type="List" />
+    <aura:attribute name="data" type="Object" />
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    
+    <aura:if isTrue="{!v.showSpinner}" >
+        
+        <lightning:spinner variant="brand" size="medium" alternativeText="Loading..." />
+        
+        <aura:set attribute="else" >
+            
+            <aura:if isTrue="{!empty(v.data)}" >
+                
+                <lightning:card iconName="action:approval" title="No Duplicates Found" class="slds-p-around_small" />
+                
+                <aura:set attribute="else" >
+                    
+    				<lightning:card iconName="standard:merge" title="Merge Duplicates" class="slds-p-around_small" >
+                        
+                        <lightning:datatable keyField="id"
+                                             data="{!v.data}"
+                                             columns="{!v.columns}"
+                                             hideCheckboxColumn="true"
+                                             onrowaction="{!c.handleRowAction}" />
+                        
+                        <aura:set attribute="footer" >
+                            <lightning:button label="Merge Duplicates" variant="brand" iconName="utility:merge" onclick="{!c.mergeDuplicates}" />
+                        </aura:set>
+                        
+                    </lightning:card>
+                </aura:set>
+            </aura:if>
+        </aura:set>
+    </aura:if>
+</aura:component>

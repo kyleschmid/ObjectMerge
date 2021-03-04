@@ -5,7 +5,27 @@
         <type>Default</type>
     </actionOverrides>
     <actionOverrides>
+        <actionName>Accept</actionName>
+        <formFactor>Large</formFactor>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Accept</actionName>
+        <formFactor>Small</formFactor>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
         <actionName>CancelEdit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>CancelEdit</actionName>
+        <formFactor>Large</formFactor>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>CancelEdit</actionName>
+        <formFactor>Small</formFactor>
         <type>Default</type>
     </actionOverrides>
     <actionOverrides>
@@ -13,7 +33,27 @@
         <type>Default</type>
     </actionOverrides>
     <actionOverrides>
+        <actionName>Clone</actionName>
+        <formFactor>Large</formFactor>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Clone</actionName>
+        <formFactor>Small</formFactor>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
         <actionName>Delete</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Delete</actionName>
+        <formFactor>Large</formFactor>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Delete</actionName>
+        <formFactor>Small</formFactor>
         <type>Default</type>
     </actionOverrides>
     <actionOverrides>
@@ -21,7 +61,27 @@
         <type>Default</type>
     </actionOverrides>
     <actionOverrides>
+        <actionName>Edit</actionName>
+        <formFactor>Large</formFactor>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Edit</actionName>
+        <formFactor>Small</formFactor>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
         <actionName>List</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>List</actionName>
+        <formFactor>Large</formFactor>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>List</actionName>
+        <formFactor>Small</formFactor>
         <type>Default</type>
     </actionOverrides>
     <actionOverrides>
@@ -29,7 +89,27 @@
         <type>Default</type>
     </actionOverrides>
     <actionOverrides>
+        <actionName>New</actionName>
+        <formFactor>Large</formFactor>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>New</actionName>
+        <formFactor>Small</formFactor>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
         <actionName>SaveEdit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>SaveEdit</actionName>
+        <formFactor>Large</formFactor>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>SaveEdit</actionName>
+        <formFactor>Small</formFactor>
         <type>Default</type>
     </actionOverrides>
     <actionOverrides>
@@ -37,7 +117,27 @@
         <type>Default</type>
     </actionOverrides>
     <actionOverrides>
+        <actionName>Tab</actionName>
+        <formFactor>Large</formFactor>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Tab</actionName>
+        <formFactor>Small</formFactor>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
         <actionName>View</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <formFactor>Large</formFactor>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <formFactor>Small</formFactor>
         <type>Default</type>
     </actionOverrides>
     <allowInChatterGroups>false</allowInChatterGroups>
@@ -48,10 +148,12 @@
     <enableBulkApi>false</enableBulkApi>
     <enableFeeds>false</enableFeeds>
     <enableHistory>false</enableHistory>
+    <enableLicensing>false</enableLicensing>
     <enableReports>true</enableReports>
     <enableSearch>false</enableSearch>
     <enableSharing>false</enableSharing>
     <enableStreamingApi>false</enableStreamingApi>
+    <externalSharingModel>ReadWrite</externalSharingModel>
     <fields>
         <fullName>Active__c</fullName>
         <defaultValue>true</defaultValue>
@@ -61,18 +163,6 @@
         <label>Active</label>
         <trackTrending>false</trackTrending>
         <type>Checkbox</type>
-    </fields>
-    <fields>
-        <fullName>Child_Relationship_Name__c</fullName>
-        <description>Name of the child relationship. This can be found in the lookup field metadata or by using Workbench. Please append &quot;__r&quot; for custom lookup fields.</description>
-        <externalId>false</externalId>
-        <inlineHelpText>Name of the child relationship. This can be found in the lookup field metadata or by using Workbench. Please append &quot;__r&quot; for custom lookup fields.</inlineHelpText>
-        <label>Child Relationship Name</label>
-        <length>80</length>
-        <required>false</required>
-        <trackTrending>false</trackTrending>
-        <type>Text</type>
-        <unique>false</unique>
     </fields>
     <fields>
         <fullName>Clone_Reparented_Victim__c</fullName>
@@ -100,22 +190,27 @@
                 <value>
                     <fullName>Keep Oldest Created</fullName>
                     <default>false</default>
+                    <label>Keep Oldest Created</label>
                 </value>
                 <value>
                     <fullName>Keep Newest Created</fullName>
                     <default>false</default>
+                    <label>Keep Newest Created</label>
                 </value>
                 <value>
                     <fullName>Keep Last Modified</fullName>
                     <default>false</default>
+                    <label>Keep Last Modified</label>
                 </value>
                 <value>
                     <fullName>Delete Duplicate</fullName>
                     <default>false</default>
+                    <label>Delete Duplicate</label>
                 </value>
                 <value>
                     <fullName>Keep Master</fullName>
                     <default>false</default>
+                    <label>Keep Master</label>
                 </value>
             </valueSetDefinition>
         </valueSet>
@@ -175,26 +270,43 @@
                 <value>
                     <fullName>Move Victim</fullName>
                     <default>false</default>
+                    <label>Move Victim</label>
                 </value>
                 <value>
                     <fullName>Clone Victim</fullName>
                     <default>false</default>
+                    <label>Clone Victim</label>
                 </value>
                 <value>
                     <fullName>Delete Victim</fullName>
                     <default>false</default>
+                    <label>Delete Victim</label>
                 </value>
             </valueSetDefinition>
         </valueSet>
     </fields>
     <label>Object Merge Handler</label>
     <listViews>
+        <fullName>Active_Merge_Handlers</fullName>
+        <columns>NAME</columns>
+        <columns>RECORDTYPE</columns>
+        <columns>Order_of_Execution__c</columns>
+        <columns>Standard_Action__c</columns>
+        <columns>LAST_UPDATE</columns>
+        <filterScope>Everything</filterScope>
+        <filters>
+            <field>Active__c</field>
+            <operation>equals</operation>
+            <value>1</value>
+        </filters>
+        <label>Active Merge Handlers</label>
+    </listViews>
+    <listViews>
         <fullName>All</fullName>
         <columns>NAME</columns>
         <columns>RECORDTYPE</columns>
         <columns>Parent_Handler__c</columns>
         <columns>Object_Lookup_Field_API_Name__c</columns>
-        <columns>Child_Relationship_Name__c</columns>
         <columns>Standard_Action__c</columns>
         <columns>Merge_Action__c</columns>
         <columns>Clone_Reparented_Victim__c</columns>
@@ -208,7 +320,6 @@
         <columns>Parent_Handler__c</columns>
         <columns>NAME</columns>
         <columns>Object_Lookup_Field_API_Name__c</columns>
-        <columns>Child_Relationship_Name__c</columns>
         <columns>Standard_Action__c</columns>
         <columns>Merge_Action__c</columns>
         <columns>Clone_Reparented_Victim__c</columns>
@@ -329,4 +440,21 @@
     </recordTypes>
     <searchLayouts/>
     <sharingModel>ReadWrite</sharingModel>
+    <validationRules>
+        <fullName>Parent_Handler_Populated</fullName>
+        <active>true</active>
+        <description>Ensures the Parent Handler field is populated on active Child Object Merge Handlers.</description>
+        <errorConditionFormula>Active__c &amp;&amp; RecordType.DeveloperName == &quot;Child_Handler&quot; &amp;&amp; ISBLANK(Parent_Handler__c)</errorConditionFormula>
+        <errorDisplayField>Parent_Handler__c</errorDisplayField>
+        <errorMessage>The Parent Handler field must be populated on active Child Object Merge Handlers.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Standard_Action_Populated</fullName>
+        <active>true</active>
+        <description>Ensures the Standard Action field is populated on active Child Object Merge Handlers.</description>
+        <errorConditionFormula>Active__c &amp;&amp; RecordType.DeveloperName == &quot;Child_Handler&quot; &amp;&amp; ISBLANK(TEXT(Standard_Action__c))</errorConditionFormula>
+        <errorDisplayField>Standard_Action__c</errorDisplayField>
+        <errorMessage>The Standard Action field must be populated on active Child Object Merge Handlers.</errorMessage>
+    </validationRules>
+    <visibility>Public</visibility>
 </CustomObject>

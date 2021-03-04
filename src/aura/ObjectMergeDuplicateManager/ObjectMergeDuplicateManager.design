@@ -1,0 +1,5 @@
+<design:component label="ObjectMerge Duplicate Manager" >
+    
+    <design:attribute name="fields" label="Fields" description="Comma-seperated list of field API names to include in table" />
+    
+</design:component>

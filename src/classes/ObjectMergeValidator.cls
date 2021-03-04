@@ -1,7 +1,7 @@
 /*
     BSD 3-Clause License
     
-    Copyright (c) 2019, Kyle Schmid, Huron Consulting Group
+    Copyright (c) 2021, Kyle Schmid, Huron Consulting Group
     All rights reserved.
     
     Redistribution and use in source and binary forms, with or without
@@ -31,31 +31,107 @@
 */
 public class ObjectMergeValidator {
 	
+    // Get global describe once to save CPU time
     private static final Map<String, Schema.SObjectType> GLOBAL_DESCRIBE = Schema.getGlobalDescribe();
     
-    // Checks to make sure name of handler is in the org
+    // Record Type ID for Child Object Merge Handlers
+    private static final Id CHILD_HANDLER_RT_ID = Schema.SObjectType.Object_Merge_Handler__c.getRecordTypeInfosByDeveloperName().get('Child_Handler').getRecordTypeId();
+    
+    // Error messages
+    private static final String INVALID_OBJECT_ERROR = 'This Object Merge Handler is invalid because the SObject does not exist. Check to make sure the API name is valid.';
+    private static final String INVALID_LOOKUP_FIELD_ERROR = 'This Object Merge Handler is invalid because the Object Lookup Field does not exist on the object. Check to make sure the API name is valid.';
+    private static final String INVALID_LOOKUP_ERROR = 'This Object Merge Handler is invalid because the Object Lookup Field is not a field that references the parent object.';
+    private static final String INVALID_FIELD_ERROR = 'This Object Merge Field is invalid because the field does not exist on the parent object. Check to make sure the API name is valid.';
+    
+    // Method to ensure the Object Merge Handlers are valid
     public static void validateObjectMergeHandlers(List<Object_Merge_Handler__c> objectMergeHandlers) {
 		
-        // Loop through all handlers to find which aren't valid based on their objects absence in the org
-        for (Object_Merge_Handler__c omh:objectMergeHandlers)
-            if (!GLOBAL_DESCRIBE.containsKey(omh.Name.toLowerCase()))
-                omh.addError('This Object Merge handler is invalid because the sObject does not exist. Check to make sure the API name is valid.');
+        Set<Id> parentHandlerIds = new Set<Id>(); // Set of parent object merge handler IDs from child handlers
+        List<Object_Merge_Handler__c> childHandlers = new List<Object_Merge_Handler__c>(); // Set of child object merge handlers
+        
+        // Loop through all handlers and add error to any active handlers
+        // that have an invalid object API name or invalid lookup field API name
+        for (Object_Merge_Handler__c h:objectMergeHandlers) {
+            
+            // Only run on active handlers
+            if (h.Active__c) {
+                
+                // Check if object API name is valid and add error if not
+                if (!GLOBAL_DESCRIBE.containsKey(h.Name)) {
+                    
+                	h.addError(INVALID_OBJECT_ERROR); // Add error to handler
+                    
+                } else if (h.RecordTypeId == CHILD_HANDLER_RT_ID && h.Parent_Handler__c != null) {
+                    
+                    // Check if lookup field API name is valid and add error if not
+                    if (!GLOBAL_DESCRIBE.get(h.Name).getDescribe().fields.getMap().containsKey(h.Object_Lookup_Field_API_Name__c)) {
+                        
+                        h.addError(INVALID_LOOKUP_FIELD_ERROR); // Add error to handler
+                        
+                    } else {
+                        
+                        parentHandlerIds.add(h.Parent_Handler__c); // Add parent handler ID to set
+                        childHandlers.add(h); // Add handler to list of child handlers
+                    }
+                }
+            }
+        }
+        
+        // Ensure all child handlers have valid lookup field
+        if (!childHandlers.isEmpty()) {
+            
+            // Get map of parent handlers
+            Map<Id, Object_Merge_Handler__c> parentHandlers = new Map<Id, Object_Merge_Handler__c>([SELECT Id, Name FROM Object_Merge_Handler__c WHERE Id IN :parentHandlerIds]);
+            
+            // Loop over child handlers and ensure lookup field references parent object type
+            for (Object_Merge_Handler__c h:childHandlers) {
+                
+                // Get object type of parent handler
+                Schema.SObjectType parentObject = GLOBAL_DESCRIBE.get(parentHandlers.get(h.Parent_Handler__c).Name);
+                
+                // Get list of object types the lookup field references
+                List<Schema.SObjectType> referenceObjects = GLOBAL_DESCRIBE.get(h.Name).getDescribe().fields.getMap().get(h.Object_Lookup_Field_API_Name__c).getDescribe().getReferenceTo();
+                
+                // Add error if parent object type is null, list of object types referenced is null,
+                // or list of object types references does not contain parent object type
+                if (parentObject == null || referenceObjects == null || !(new Set<Schema.SObjectType>(referenceObjects)).contains(parentObject))
+                    h.addError(INVALID_LOOKUP_ERROR);
+            }
+        }
     }
-
-    // Ensures that the name of the field handler is on the parent object
-    public static void validateFieldHandlers(List<Object_Merge_Field__c> objectMergeFields) {
+    
+    // Method to ensure the Object Merge Fields are valid
+    public static void validateObjectMergeFields(List<Object_Merge_Field__c> objectMergeFields) {
 		
-        // Collect set of handler ids
-        Set<Id> handlerIds = new Set<Id>();
-        for (Object_Merge_Field__c omf:objectMergeFields)
-            handlerIds.add(omf.Object_Merge_Handler__c);
+        Set<Id> handlerIds = new Set<Id>(); // Set of handler IDs for active Object Merge Fields
+        List<Object_Merge_Field__c> activeFields = new List<Object_Merge_Field__c>(); // List of active Object Merge Fields
+        
+        // Loop over list and get list of active Object Merge Fields and set of handler ids for those fields
+        for (Object_Merge_Field__c f:objectMergeFields) {
+            
+            // Only run on active fields
+            if (f.Active__c) {
+                
+            	handlerIds.add(f.Object_Merge_Handler__c); // Add handler ID to set
+                activeFields.add(f); // Add field to list
+            }
+        }
 		
-        // Query for handlers to get object names
-        Map<Id, Object_Merge_Handler__c> handlers = new Map<Id, Object_Merge_Handler__c>([SELECT Id, Name FROM Object_Merge_Handler__c WHERE Id IN :handlerIds]);
-		
-        // Loop through all fields to find which aren't valid based on their absence on the parent object
-        for (Object_Merge_Field__c omf:objectMergeFields)
-            if (!GLOBAL_DESCRIBE.get(handlers.get(omf.Object_Merge_Handler__c).Name.toLowerCase()).getDescribe().fields.getMap().keySet().contains(omf.Name.toLowerCase()))
-                omf.addError( 'This Object Merge Field is invalid because the field does on the handler\'s object. Check to make sure the API name is valid.' );
+        // Ensure each active field is valid
+        if (!activeFields.isEmpty()) {
+            
+            // Map of fields for object by Object Merge Handler ID
+            Map<Id, Map<String, Schema.SObjectField>> handlerFieldMap = new Map<Id, Map<String, Schema.SObjectField>>();
+            
+            // Query Object Merge Handlers and populate map from describe information
+            for (Object_Merge_Handler__c h:[SELECT Id, Name FROM Object_Merge_Handler__c WHERE Id IN :handlerIds])
+                if (GLOBAL_DESCRIBE.containsKey(h.Name))
+                    handlerFieldMap.put(h.Id, GLOBAL_DESCRIBE.get(h.Name).getDescribe().fields.getMap());
+            
+            // Loop through all fields and add error to any that have an invalid API name for the parent object
+            for (Object_Merge_Field__c f:activeFields)
+                if (!handlerFieldMap.containsKey(f.Object_Merge_Handler__c) || !handlerFieldMap.get(f.Object_Merge_Handler__c).containsKey(f.Name))
+                    f.addError(INVALID_FIELD_ERROR);
+        }
     }
 }
