@@ -458,7 +458,7 @@ private class ObjectMergePairTriggerHandlerTest {
             Datetime orgCreatedDate = [SELECT Id, CreatedDate FROM Organization LIMIT 1].CreatedDate.addHours(1);
             
             Id profileId;
-        	for (Profile p:[SELECT Id FROM Profile WHERE UserType IN ('CSPLitePortal', 'CustomerSuccess', 'PowerCustomerSuccess') AND CreatedDate > :orgCreatedDate LIMIT 1])
+        	for (Profile p:[SELECT Id FROM Profile WHERE UserType IN ('CSPLitePortal', 'CustomerSuccess', 'PowerCustomerSuccess') AND CreatedDate > :orgCreatedDate ORDER BY CreatedDate DESC LIMIT 1])
             	profileId = p.Id;
             
             if (profileId != null) {
