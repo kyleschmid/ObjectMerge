@@ -736,6 +736,7 @@ public without sharing class ObjectMergeUtility {
             // Set DMLOptions to allow duplicates to get saved. This helps avoid
             // errors when updating master records before deleting cictim records.
             Database.DMLOptions options = new Database.DMLOptions();
+            options.optAllOrNone = true;
             options.DuplicateRuleHeader.AllowSave = true;
             
             // Update records
