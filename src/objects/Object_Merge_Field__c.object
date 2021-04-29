@@ -180,6 +180,16 @@
         <writeRequiresMasterRead>false</writeRequiresMasterRead>
     </fields>
     <fields>
+        <fullName>Treat_False_as_Null__c</fullName>
+        <defaultValue>false</defaultValue>
+        <description>When checked, the value of unchecked checkbox fields will be treated as null during the merge process. Unchecked checkbox fields on master records will be overwritten by checked checkbox fields on victim records.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>When checked, the value of unchecked checkbox fields will be treated as null during the merge process. Unchecked checkbox fields on master records will be overwritten by checked checkbox fields on victim records.</inlineHelpText>
+        <label>Treat False as Null</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
         <fullName>Use_for_Matching__c</fullName>
         <defaultValue>false</defaultValue>
         <description>If checked, this field will be used to match to duplicate related records on the master record.</description>

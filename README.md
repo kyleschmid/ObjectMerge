@@ -13,8 +13,8 @@ ObjectMerge is released under the open source BSD license. Contributions (code a
 ### Unmangaged Package
 
 You can go to one of the following links to install Object Merge as an unmanaged package:
-* <a href="https://login.salesforce.com/packaging/installPackage.apexp?p0=04t0H000000YOey" target="_blank" >Production</a>
-* <a href="https://test.salesforce.com/packaging/installPackage.apexp?p0=04t0H000000YOey" target="_blank" >Sandbox</a>
+* <a href="https://login.salesforce.com/packaging/installPackage.apexp?p0=04t0H000000YOf3" target="_blank" >Production</a>
+* <a href="https://test.salesforce.com/packaging/installPackage.apexp?p0=04t0H000000YOf3" target="_blank" >Sandbox</a>
 
 ### Ant/Force.com Migration Tool
 You can fork this repository and deploy the unmanaged version of the code into a Salesforce org of your choice.
@@ -74,6 +74,7 @@ Once installed, you'll want to set up your first Object Merge Handler. To do so,
   	* Populate each Object Merge Field record with the API name of the field on the parent object (e.g. "Name" or "Description")
   	* When the merge is performed, any field that is null on the master but not null on the victim will be copied over to the master
   	* Ignore the "Use for Matching" checkbox for parent fields
+	* If the field is a checkbox field and you want values of true to always overwrite values of false, check the "Treat False as Null" checkbox
 4. Go back to the Object Merge Handler and click "New" on the Object Merge Handlers related list
   	* Select "Child Handler" for the Record Type
   	* Populate the Object API Name of the field with the API name of the object related to the parent object that you want to merge (e.g. "Contact")

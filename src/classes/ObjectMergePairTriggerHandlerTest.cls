@@ -31,7 +31,7 @@
 */
 @isTest
 private class ObjectMergePairTriggerHandlerTest {
-	
+    
     @isTest
     static void test_move_victim_keep_master() {
         
@@ -55,16 +55,21 @@ private class ObjectMergePairTriggerHandlerTest {
         
         Test.stopTest();
         
+        p = [SELECT Id, Status__c FROM Object_Merge_Pair__c WHERE Id = :p.Id];
+        System.assertEquals('Merged', p.Status__c);
+        
         Account a1 = [SELECT Id, Name, Website FROM Account WHERE Id = :a1Id];
         System.assertEquals('test1', a1.Name);
         System.assertEquals('www.test2.com', a1.Website);
         
         System.assert([SELECT Id FROM Account WHERE Id = :a2Id].isEmpty());
         
-        Contact c1 = [SELECT Id, AccountId, LastName, Email FROM Contact WHERE Id = :c1Id];
+        Contact c1 = [SELECT Id, AccountId, LastName, Email, DoNotCall, HasOptedOutOfEmail FROM Contact WHERE Id = :c1Id];
         System.assertEquals(a1Id, c1.AccountId);
         System.assertEquals('test1', c1.LastName);
         System.assertEquals('test@test.com', c1.Email);
+        System.assertEquals(false, c1.DoNotCall);
+        System.assertEquals(true, c1.HasOptedOutOfEmail);
         
         System.assert([SELECT Id FROM Contact WHERE Id = :c2Id].isEmpty());
         
@@ -94,16 +99,21 @@ private class ObjectMergePairTriggerHandlerTest {
         
         Test.stopTest();
         
+        p = [SELECT Id, Status__c FROM Object_Merge_Pair__c WHERE Id = :p.Id];
+        System.assertEquals('Merged', p.Status__c);
+        
         Account a1 = [SELECT Id, Name, Website FROM Account WHERE Id = :a1Id];
         System.assertEquals('test1', a1.Name);
         System.assertEquals('www.test2.com', a1.Website);
         
         System.assert([SELECT Id FROM Account WHERE Id = :a2Id].isEmpty());
         
-        Contact c1 = [SELECT Id, AccountId, LastName, Email FROM Contact WHERE Id = :c1Id];
+        Contact c1 = [SELECT Id, AccountId, LastName, Email, DoNotCall, HasOptedOutOfEmail FROM Contact WHERE Id = :c1Id];
         System.assertEquals(a1Id, c1.AccountId);
         System.assertEquals('test1', c1.LastName);
         System.assertEquals(null, c1.Email);
+        System.assertEquals(false, c1.DoNotCall);
+        System.assertEquals(false, c1.HasOptedOutOfEmail);
         
         System.assert([SELECT Id FROM Contact WHERE Id = :c2Id].isEmpty());
         
@@ -125,8 +135,8 @@ private class ObjectMergePairTriggerHandlerTest {
         Id c2Id = [SELECT Id FROM Contact WHERE LastName = 'test2'].Id;
         Id c3Id = [SELECT Id FROM Contact WHERE LastName = 'test3'].Id;
         
-        Test.setCreatedDate(c1Id, System.NOW().addMinutes(1));
-        Test.setCreatedDate(c2Id, System.NOW().addMinutes(-1));
+        Test.setCreatedDate(c1Id, System.now().addHours(-1));
+        Test.setCreatedDate(c2Id, System.now().addHours(-2));
         
         Object_Merge_Pair__c p = new Object_Merge_Pair__c(Master_ID__c = a1Id, Victim_ID__c = a2Id);
         
@@ -135,6 +145,9 @@ private class ObjectMergePairTriggerHandlerTest {
         insert p;
         
         Test.stopTest();
+        
+        p = [SELECT Id, Status__c FROM Object_Merge_Pair__c WHERE Id = :p.Id];
+        System.assertEquals('Merged', p.Status__c);
         
         Account a1 = [SELECT Id, Name, Website FROM Account WHERE Id = :a1Id];
         System.assertEquals('test1', a1.Name);
@@ -146,9 +159,11 @@ private class ObjectMergePairTriggerHandlerTest {
         System.assert([SELECT Id FROM Contact WHERE Id = :c2Id].isEmpty());
         System.assert([SELECT Id FROM Contact WHERE Id = :c3Id].isEmpty());
         
-        Contact clone = [SELECT Id, AccountId, LastName, Email FROM Contact WHERE LastName = 'test2'];
+        Contact clone = [SELECT Id, AccountId, LastName, Email, DoNotCall, HasOptedOutOfEmail FROM Contact WHERE LastName = 'test2'];
         System.assertEquals(a1Id, clone.AccountId);
         System.assertEquals('test@test.com', clone.Email);
+        System.assertEquals(true, clone.DoNotCall);
+        System.assertEquals(true, clone.HasOptedOutOfEmail);
         
         Contact c3New = [SELECT Id, AccountId FROM Contact WHERE LastName = 'test3'];
         System.assertEquals(a1Id, c3New.AccountId);
@@ -166,8 +181,8 @@ private class ObjectMergePairTriggerHandlerTest {
         Id c1Id = [SELECT Id FROM Contact WHERE LastName = 'test1'].Id;
         Id c2Id = [SELECT Id FROM Contact WHERE LastName = 'test2'].Id;
         
-        Test.setCreatedDate(c1Id, System.NOW().addMinutes(1));
-        Test.setCreatedDate(c2Id, System.NOW().addMinutes(-1));
+        Test.setCreatedDate(c1Id, System.now().addHours(-1));
+        Test.setCreatedDate(c2Id, System.now().addHours(-2));
         
         Object_Merge_Pair__c p = new Object_Merge_Pair__c(Master_ID__c = a1Id, Victim_ID__c = a2Id);
         
@@ -177,6 +192,9 @@ private class ObjectMergePairTriggerHandlerTest {
         
         Test.stopTest();
         
+        p = [SELECT Id, Status__c FROM Object_Merge_Pair__c WHERE Id = :p.Id];
+        System.assertEquals('Merged', p.Status__c);
+        
         Account a1 = [SELECT Id, Name, Website FROM Account WHERE Id = :a1Id];
         System.assertEquals('test1', a1.Name);
         System.assertEquals('www.test2.com', a1.Website);
@@ -185,10 +203,12 @@ private class ObjectMergePairTriggerHandlerTest {
         
         System.assert([SELECT Id FROM Contact WHERE Id = :c1Id].isEmpty());
         
-        Contact c2 = [SELECT Id, AccountId, LastName, Email FROM Contact WHERE Id = :c2Id];
+        Contact c2 = [SELECT Id, AccountId, LastName, Email, DoNotCall, HasOptedOutOfEmail FROM Contact WHERE Id = :c2Id];
         System.assertEquals(a1Id, c2.AccountId);
         System.assertEquals('test2', c2.LastName);
         System.assertEquals('test@test.com', c2.Email);
+        System.assertEquals(true, c2.DoNotCall);
+        System.assertEquals(true, c2.HasOptedOutOfEmail);
     }
     
     @isTest
@@ -203,6 +223,9 @@ private class ObjectMergePairTriggerHandlerTest {
         Id c1Id = [SELECT Id FROM Contact WHERE LastName = 'test1'].Id;
         Id c2Id = [SELECT Id FROM Contact WHERE LastName = 'test2'].Id;
         
+        Test.setCreatedDate(c1Id, System.now().addHours(-1));
+        Test.setCreatedDate(c2Id, System.now().addHours(-2));
+        
         Object_Merge_Pair__c p = new Object_Merge_Pair__c(Master_ID__c = a1Id, Victim_ID__c = a2Id);
         
         Test.startTest();
@@ -211,16 +234,21 @@ private class ObjectMergePairTriggerHandlerTest {
         
         Test.stopTest();
         
+        p = [SELECT Id, Status__c FROM Object_Merge_Pair__c WHERE Id = :p.Id];
+        System.assertEquals('Merged', p.Status__c);
+        
         Account a1 = [SELECT Id, Name, Website FROM Account WHERE Id = :a1Id];
         System.assertEquals('test1', a1.Name);
         System.assertEquals('www.test2.com', a1.Website);
         
         System.assert([SELECT Id FROM Account WHERE Id = :a2Id].isEmpty());
         
-        Contact c1 = [SELECT Id, AccountId, LastName, Email FROM Contact WHERE Id = :c1Id];
+        Contact c1 = [SELECT Id, AccountId, LastName, Email, DoNotCall, HasOptedOutOfEmail FROM Contact WHERE Id = :c1Id];
         System.assertEquals(a1Id, c1.AccountId);
         System.assertEquals('test1', c1.LastName);
         System.assertEquals('test@test.com', c1.Email);
+        System.assertEquals(false, c1.DoNotCall);
+        System.assertEquals(true, c1.HasOptedOutOfEmail);
         
         System.assert([SELECT Id FROM Contact WHERE Id = :c2Id].isEmpty());
     }
@@ -237,6 +265,8 @@ private class ObjectMergePairTriggerHandlerTest {
         Id c1Id = [SELECT Id FROM Contact WHERE LastName = 'test1'].Id;
         Id c2Id = [SELECT Id FROM Contact WHERE LastName = 'test2'].Id;
         
+        update (new Contact(Id = c1Id));
+        
         Object_Merge_Pair__c p = new Object_Merge_Pair__c(Master_ID__c = a1Id, Victim_ID__c = a2Id);
         
         Test.startTest();
@@ -245,16 +275,21 @@ private class ObjectMergePairTriggerHandlerTest {
         
         Test.stopTest();
         
+        p = [SELECT Id, Status__c FROM Object_Merge_Pair__c WHERE Id = :p.Id];
+        System.assertEquals('Merged', p.Status__c);
+        
         Account a1 = [SELECT Id, Name, Website FROM Account WHERE Id = :a1Id];
         System.assertEquals('test1', a1.Name);
         System.assertEquals('www.test2.com', a1.Website);
         
         System.assert([SELECT Id FROM Account WHERE Id = :a2Id].isEmpty());
         
-        Contact c1 = [SELECT Id, AccountId, LastName, Email FROM Contact WHERE Id = :c1Id];
+        Contact c1 = [SELECT Id, AccountId, LastName, Email, DoNotCall, HasOptedOutOfEmail FROM Contact WHERE Id = :c1Id];
         System.assertEquals(a1Id, c1.AccountId);
         System.assertEquals('test1', c1.LastName);
         System.assertEquals('test@test.com', c1.Email);
+        System.assertEquals(false, c1.DoNotCall);
+        System.assertEquals(true, c1.HasOptedOutOfEmail);
         
         System.assert([SELECT Id FROM Contact WHERE Id = :c2Id].isEmpty());
     }
@@ -276,27 +311,32 @@ private class ObjectMergePairTriggerHandlerTest {
         
         Test.stopTest();
         
+        p = [SELECT Id, Status__c FROM Object_Merge_Pair__c WHERE Id = :p.Id];
+        System.assertEquals('Merged', p.Status__c);
+        
         Account a1 = [SELECT Id, Name, Website FROM Account WHERE Id = :a1Id];
         System.assertEquals('test1', a1.Name);
         System.assertEquals('www.test2.com', a1.Website);
         
         System.assert([SELECT Id FROM Account WHERE Id = :a2Id].isEmpty());
         
-        Contact c1 = [SELECT Id, AccountId, LastName, Email FROM Contact WHERE Id = :c1Id];
+        Contact c1 = [SELECT Id, AccountId, LastName, Email, DoNotCall, HasOptedOutOfEmail FROM Contact WHERE Id = :c1Id];
         System.assertEquals(a1Id, c1.AccountId);
         System.assertEquals('test1', c1.LastName);
         System.assertEquals(null, c1.Email);
+        System.assertEquals(false, c1.DoNotCall);
+        System.assertEquals(false, c1.HasOptedOutOfEmail);
     }
     
     @isTest
     static void test_handle_users_1() {
         
-        Contact c4 = [SELECT Id, (SELECT Id FROM Users) FROM Contact WHERE LastName = 'test4'];
+        Id c4Id = [SELECT Id FROM Contact WHERE LastName = 'test4'].Id;
         Id c5Id = [SELECT Id FROM Contact WHERE LastName = 'test5'].Id;
         
-        Boolean hasUsers = !c4.Users.isEmpty();
+        Boolean testUserMerge = ObjectMergeUtility.portalEnabled && Database.countQuery('SELECT count() FROM User WHERE ContactId = :c4Id') == 1;
         
-        Object_Merge_Pair__c p = new Object_Merge_Pair__c(Master_ID__c = c4.Id, Victim_ID__c = c5Id);
+        Object_Merge_Pair__c p = new Object_Merge_Pair__c(Master_ID__c = c4Id, Victim_ID__c = c5Id);
         
         Test.startTest();
         
@@ -305,25 +345,32 @@ private class ObjectMergePairTriggerHandlerTest {
         Test.stopTest();
         
         p = [SELECT Id, Status__c FROM Object_Merge_Pair__c WHERE Id = :p.Id];
-        System.assertEquals(hasUsers ? 'Processing' : 'Merged', p.Status__c);
+        System.assertEquals(testUserMerge ? 'Processing' : 'Merged', p.Status__c);
     }
     
     @isTest
     static void test_handle_users_2() {
         
-        Contact c4 = [SELECT Id, (SELECT Id FROM Users) FROM Contact WHERE LastName = 'test4'];
-        Contact c5 = [SELECT Id, (SELECT Id FROM Users) FROM Contact WHERE LastName = 'test5'];
+        Id c4Id = [SELECT Id FROM Contact WHERE LastName = 'test4'].Id;
+        Id c5Id = [SELECT Id FROM Contact WHERE LastName = 'test5'].Id;
         
-        Boolean hasUsers = !c4.Users.isEmpty();
+        Boolean testUserMerge = ObjectMergeUtility.portalEnabled && Database.countQuery('SELECT count() FROM User WHERE ContactId = :c4Id') == 1;
         
         Set<Id> userIdsToDeactivate = new Set<Id>();
         Map<Id, Id> ownerIdMap = new Map<Id, Id>();
-        if (hasUsers) {
-            userIdsToDeactivate.add(c5.Users[0].Id);
-            ownerIdMap.put(c5.Users[0].Id, c4.Users[0].Id);
+        if (testUserMerge) {
+            
+            Id u4Id = Database.query('SELECT Id FROM User WHERE ContactId = :c4Id')[0].Id;
+            Id u5Id = Database.query('SELECT Id FROM User WHERE ContactId = :c5Id')[0].Id;
+            
+            userIdsToDeactivate.add(u5Id);
+            ownerIdMap.put(u5Id, u4Id);
+            
+        } else {
+            userIdsToDeactivate.add(UserInfo.getUserId());
         }
         
-        Object_Merge_Pair__c p = new Object_Merge_Pair__c(Master_ID__c = c4.Id, Victim_ID__c = c5.Id);
+        Object_Merge_Pair__c p = new Object_Merge_Pair__c(Master_ID__c = c4Id, Victim_ID__c = c5Id);
         
         ObjectMergePairTriggerHandler.disable();
         insert p;
@@ -340,16 +387,21 @@ private class ObjectMergePairTriggerHandlerTest {
     @isTest
     static void test_handle_users_3() {
         
-        Contact c4 = [SELECT Id, (SELECT Id FROM Users) FROM Contact WHERE LastName = 'test4'];
+        Id c4Id = [SELECT Id FROM Contact WHERE LastName = 'test4'].Id;
         Id c6Id = [SELECT Id FROM Contact WHERE LastName = 'test6'].Id;
         
-        Boolean hasUsers = !c4.Users.isEmpty();
+        Boolean testUserMerge = ObjectMergeUtility.portalEnabled && Database.countQuery('SELECT count() FROM User WHERE ContactId = :c4Id') == 1;
         
+        Id u4Id;
         Map<Id, Id> ownerIdMap = new Map<Id, Id>();
-        if (hasUsers)
-            ownerIdMap.put(UserInfo.getUserId(), c4.Users[0].Id);
         
-        Object_Merge_Pair__c p = new Object_Merge_Pair__c(Master_ID__c = c4.Id, Victim_ID__c = c6Id);
+        if (testUserMerge) {
+            
+            u4Id = Database.query('SELECT Id FROM User WHERE ContactId = :c4Id')[0].Id;
+            ownerIdMap.put(UserInfo.getUserId(), u4Id);
+        }
+        
+        Object_Merge_Pair__c p = new Object_Merge_Pair__c(Master_ID__c = c4Id, Victim_ID__c = c6Id);
         
         ObjectMergePairTriggerHandler.disable();
         insert p;
@@ -361,18 +413,46 @@ private class ObjectMergePairTriggerHandlerTest {
         
         Test.stopTest();
         
-        c4 = [SELECT Id, LastName, (SELECT Id FROM Users), (SELECT Id, OwnerId FROM Tasks) FROM Contact WHERE Id = :c4.Id];
+        Contact c4 = [SELECT Id, LastName, (SELECT Id, OwnerId FROM Tasks) FROM Contact WHERE Id = :c4Id];
         System.assertEquals('test4', c4.LastName);
         
         System.assert([SELECT Id FROM Contact WHERE Id = :c6Id].isEmpty());
         
-        if (hasUsers) {
+        if (testUserMerge) {
+            
             System.assertEquals(1, c4.Tasks.size());
-            System.assertEquals(c4.Users[0].Id, c4.Tasks[0].OwnerId);
+            System.assertEquals(u4Id, c4.Tasks[0].OwnerId);
         }
         
         p = [SELECT Id, Status__c FROM Object_Merge_Pair__c WHERE Id = :p.Id];
         System.assertEquals('Merged', p.Status__c);
+    }
+    
+    @isTest
+    static void test_handle_users_4() {
+        
+        Id c4Id = [SELECT Id FROM Contact WHERE LastName = 'test4'].Id;
+        Id c5Id = [SELECT Id FROM Contact WHERE LastName = 'test5'].Id;
+        
+        Boolean testUserMerge = ObjectMergeUtility.portalEnabled && Database.countQuery('SELECT count() FROM User WHERE ContactId = :c4Id') == 1;
+        
+        Object_Merge_Pair__c p = new Object_Merge_Pair__c(Master_ID__c = c4Id, Victim_ID__c = c5Id, Status__c = 'Processing');
+        
+        ObjectMergePairTriggerHandler.disable();
+        insert p;
+        ObjectMergePairTriggerHandler.enable();
+        
+        Test.startTest();
+        
+        ObjectMergeHandleUsers.handleUsers(new List<Object_Merge_Pair__c>{p});
+        
+        if (!ObjectMergeUtility.portalEnabled)
+        	ObjectMergeHandleUsers.setUserFieldsToDeactivate(new List<User>{new User()});
+        
+        Test.stopTest();
+        
+        p = [SELECT Id, Status__c FROM Object_Merge_Pair__c WHERE Id = :p.Id];
+        System.assertEquals(testUserMerge ? 'Processing' : 'Merged', p.Status__c);
     }
     
     @isTest
@@ -393,10 +473,15 @@ private class ObjectMergePairTriggerHandlerTest {
         
         Test.stopTest();
         
-        p1 = [SELECT Id, Error_Reason__c FROM Object_Merge_Pair__c WHERE Id = :p1.Id];
-        p2 = [SELECT Id, Error_Reason__c FROM Object_Merge_Pair__c WHERE Id = :p2.Id];
-        p3 = [SELECT Id, Error_Reason__c FROM Object_Merge_Pair__c WHERE Id = :p3.Id];
-        p4 = [SELECT Id, Error_Reason__c FROM Object_Merge_Pair__c WHERE Id = :p4.Id];
+        p1 = [SELECT Id, Status__c, Error_Reason__c FROM Object_Merge_Pair__c WHERE Id = :p1.Id];
+        p2 = [SELECT Id, Status__c, Error_Reason__c FROM Object_Merge_Pair__c WHERE Id = :p2.Id];
+        p3 = [SELECT Id, Status__c, Error_Reason__c FROM Object_Merge_Pair__c WHERE Id = :p3.Id];
+        p4 = [SELECT Id, Status__c, Error_Reason__c FROM Object_Merge_Pair__c WHERE Id = :p4.Id];
+        
+        System.assertEquals('Error', p1.Status__c);
+        System.assertEquals('Error', p2.Status__c);
+        System.assertEquals('Error', p3.Status__c);
+        System.assertEquals('Error', p4.Status__c);
         
         System.assertEquals('Invalid status', p1.Error_Reason__c);
         System.assertEquals('Invalid Master/Victim ID pair', p2.Error_Reason__c);
@@ -421,8 +506,9 @@ private class ObjectMergePairTriggerHandlerTest {
         
         Test.stopTest();
         
-        p1 = [SELECT Id, Error_Reason__c FROM Object_Merge_Pair__c WHERE Id = :p1.Id];
+        p1 = [SELECT Id, Status__c, Error_Reason__c FROM Object_Merge_Pair__c WHERE Id = :p1.Id];
         
+        System.assertEquals('Error', p1.Status__c);
         System.assertEquals('Error performing DML', p1.Error_Reason__c);
     }
     
@@ -446,14 +532,14 @@ private class ObjectMergePairTriggerHandlerTest {
         insert new List<Account>{a1, a2, a3, a4, a5};
         
         Contact c1 = new Contact(AccountId = a1.Id, LastName = 'test1', FirstName = 'test');
-        Contact c2 = new Contact(AccountId = a2.Id, LastName = 'test2', FirstName = 'test', Email = 'test@test.com');
+        Contact c2 = new Contact(AccountId = a2.Id, LastName = 'test2', FirstName = 'test', Email = 'test@test.com', DoNotCall = true, HasOptedOutOfEmail = true);
         Contact c3 = new Contact(AccountId = a2.Id, LastName = 'test3', FirstName = 'not_test');
         Contact c4 = new Contact(AccountId = a3.Id, LastName = 'test4', FirstName = 'test');
         Contact c5 = new Contact(AccountId = a4.Id, LastName = 'test5', FirstName = 'test');
         Contact c6 = new Contact(AccountId = a5.Id, LastName = 'test6', FirstName = 'test');
         insert new List<Contact>{c1, c2, c3, c4, c5, c6};
         
-        if (userRoleFound) {
+        if (userRoleFound && ObjectMergeUtility.portalEnabled) {
             
             Datetime orgCreatedDate = [SELECT Id, CreatedDate FROM Organization LIMIT 1].CreatedDate.addHours(1);
             
@@ -463,9 +549,16 @@ private class ObjectMergePairTriggerHandlerTest {
             
             if (profileId != null) {
                 
-        		User u4 = new User(Username = 'test_object_merge_4@test.com', ContactId = c4.Id, ProfileId = profileId, Alias = 'test4', Email = 'test@test.com', EmailEncodingKey = 'UTF-8', FirstName = 'test4', LastName = 'test4', CommunityNickname = 'test4', IsActive = true, TimeZoneSidKey = 'America/Chicago', LocaleSidKey = 'en_US', LanguageLocaleKey = 'en_US');
-        		User u5 = new User(Username = 'test_object_merge_5@test.com', ContactId = c5.Id, ProfileId = profileId, Alias = 'test5', Email = 'test@test.com', EmailEncodingKey = 'UTF-8', FirstName = 'test5', LastName = 'test5', CommunityNickname = 'test5', IsActive = true, TimeZoneSidKey = 'America/Chicago', LocaleSidKey = 'en_US', LanguageLocaleKey = 'en_US');
-        		insert new List<User>{u4, u5};
+        		User u4 = new User(Username = 'test_object_merge_4@test.com', ProfileId = profileId, Alias = 'test4', Email = 'test@test.com', EmailEncodingKey = 'UTF-8', FirstName = 'test4', LastName = 'test4', IsActive = true, TimeZoneSidKey = 'America/Chicago', LocaleSidKey = 'en_US', LanguageLocaleKey = 'en_US');
+        		User u5 = new User(Username = 'test_object_merge_5@test.com', ProfileId = profileId, Alias = 'test5', Email = 'test@test.com', EmailEncodingKey = 'UTF-8', FirstName = 'test5', LastName = 'test5', IsActive = true, TimeZoneSidKey = 'America/Chicago', LocaleSidKey = 'en_US', LanguageLocaleKey = 'en_US');
+        		
+                u4.put('ContactId', c4.Id);
+                u4.put('CommunityNickname', 'test4');
+                
+                u5.put('ContactId', c5.Id);
+                u5.put('CommunityNickname', 'test5');
+                
+                insert new List<User>{u4, u5};
                 
                 insert (new Task(WhoId = c6.Id, OwnerId = UserInfo.getUserId()));
             }
@@ -480,15 +573,22 @@ private class ObjectMergePairTriggerHandlerTest {
         insert new List<Object_Merge_Handler__c>{ph1, ph2, ph3};
         
         Object_Merge_Handler__c ch1 = new Object_Merge_Handler__c(Name = 'Contact', Parent_Handler__c = ph1.Id, Object_Lookup_Field_API_Name__c = 'AccountId', Standard_Action__c = 'Delete Victim', Active__c = true, RecordTypeId = cId);
-        Object_Merge_Handler__c ch2 = new Object_Merge_Handler__c(Name = 'User', Parent_Handler__c = ph2.Id, Object_Lookup_Field_API_Name__c = 'ContactId', Standard_Action__c = 'Delete Victim', Active__c = true, RecordTypeId = cId);
-        Object_Merge_Handler__c ch3 = new Object_Merge_Handler__c(Name = 'Task', Parent_Handler__c = ph2.Id, Object_Lookup_Field_API_Name__c = 'WhoId', Standard_Action__c = 'Move Victim', Active__c = true, RecordTypeId = cId);
-        insert new List<Object_Merge_Handler__c>{ch1, ch2, ch3};
+        Object_Merge_Handler__c ch2 = new Object_Merge_Handler__c(Name = 'Task', Parent_Handler__c = ph2.Id, Object_Lookup_Field_API_Name__c = 'WhoId', Standard_Action__c = 'Move Victim', Active__c = true, RecordTypeId = cId);
+        
+        List<Object_Merge_Handler__c> childHandlers = new List<Object_Merge_Handler__c>{ch1, ch2};
+        
+        if (ObjectMergeUtility.portalEnabled)
+        	childHandlers.add(new Object_Merge_Handler__c(Name = 'User', Parent_Handler__c = ph2.Id, Object_Lookup_Field_API_Name__c = 'ContactId', Standard_Action__c = 'Delete Victim', Active__c = true, RecordTypeId = cId));
+        
+        insert childHandlers;
         
         Object_Merge_Field__c f1 = new Object_Merge_Field__c(Name = 'Name', Use_for_Matching__c = false, Object_Merge_Handler__c = ph1.Id, Active__c = true);
         Object_Merge_Field__c f2 = new Object_Merge_Field__c(Name = 'Website', Use_for_Matching__c = false, Object_Merge_Handler__c = ph1.Id, Active__c = true);
         Object_Merge_Field__c f3 = new Object_Merge_Field__c(Name = 'LastName', Use_for_Matching__c = false, Object_Merge_Handler__c = ch1.Id, Active__c = true);
         Object_Merge_Field__c f4 = new Object_Merge_Field__c(Name = 'FirstName', Use_for_Matching__c = true, Object_Merge_Handler__c = ch1.Id, Active__c = true);
         Object_Merge_Field__c f5 = new Object_Merge_Field__c(Name = 'Email', Use_for_Matching__c = false, Object_Merge_Handler__c = ch1.Id, Active__c = true);
-        insert new List<Object_Merge_Field__c>{f1, f2, f3, f4, f5};
+        Object_Merge_Field__c f6 = new Object_Merge_Field__c(Name = 'DoNotCall', Use_for_Matching__c = false, Object_Merge_Handler__c = ch1.Id, Active__c = true);
+        Object_Merge_Field__c f7 = new Object_Merge_Field__c(Name = 'HasOptedOutOfEmail', Use_for_Matching__c = false, Object_Merge_Handler__c = ch1.Id, Active__c = true, Treat_False_as_Null__c = true);
+        insert new List<Object_Merge_Field__c>{f1, f2, f3, f4, f5, f6, f7};
     }
 }

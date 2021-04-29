@@ -30,6 +30,7 @@
     <types>
         <members>Object_Merge_Field__c.Active__c</members>
         <members>Object_Merge_Field__c.Object_Merge_Handler__c</members>
+        <members>Object_Merge_Field__c.Treat_False_as_Null__c</members>
         <members>Object_Merge_Field__c.Use_for_Matching__c</members>
         <members>Object_Merge_Handler__c.Active__c</members>
         <members>Object_Merge_Handler__c.Clone_Reparented_Victim__c</members>

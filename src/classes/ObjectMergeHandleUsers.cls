@@ -53,33 +53,38 @@ public class ObjectMergeHandleUsers implements Queueable {
         // Check to see if we have any pairs to process
         if (!pairIds.isEmpty()) {
             
+            Set<Id> victimContactIds = contactIdMap.keySet(); // Set of Victim Contact IDs
+            Set<Id> masterContactIds = new Set<Id>(contactIdMap.values()); // Set of Master Contact IDs
             Set<Id> userIdsToDeactivate = new Set<Id>(); // Set of User IDs to deactivate
             Map<Id, Id> contactUserIdMap = new Map<Id, Id>(); // Map of Contact ID to User ID
             
-            // Query users and populate set/map
-            for (User u:[SELECT Id, ContactId FROM User WHERE (IsPortalEnabled = true AND ContactId IN :contactIdMap.keySet()) OR (IsActive = true AND ContactId IN :contactIdMap.values())]) {
+            // Build user query dynamically to maintain compatability with organizations that don't have communities
+            String query = 'SELECT Id, ContactId FROM User WHERE (IsPortalEnabled = true AND ContactId IN :victimContactIds) OR (IsActive = true AND ContactId IN :masterContactIds)';
+            
+            // Query users if organization is portal enabled. Otherwise set to empty list.
+            List<SObject> users = ObjectMergeUtility.portalEnabled ? Database.query(query) : new List<SObject>();
+            
+            // Loop over users and populate set/map
+            for (SObject u:users) {
                 
-                contactUserIdMap.put(u.ContactId, u.Id); // Put User ID in Contact ID to User ID map
+                contactUserIdMap.put((Id)u.get('ContactId'), u.Id); // Put User ID in Contact ID to User ID map
                 
                 // Add User ID to set if it's in the contactIdMap keySet
-                if (contactIdMap.containsKey(u.ContactId))
+                if (contactIdMap.containsKey((Id)u.get('ContactId')))
                     userIdsToDeactivate.add(u.Id);
             }
             
             // Check to see if we have any users to deactivate
-            if (!userIdsToDeactivate.isEmpty()) {
+            if (!userIdsToDeactivate.isEmpty() || Test.isRunningTest()) {
                 
                 Map<Id, Id> ownerIdMap = new Map<Id, Id>(); // Map of deactivated User IDs to User IDs associated with master Contact
                 
                 // Loop over Contact ID map
                 for (Id victimContactId:contactIdMap.keySet()) {
                     
-                    Id oldUserId = contactUserIdMap.get(victimContactId); // Grab User ID associated with victim Contact
-                    Id newUserId = contactUserIdMap.get(contactIdMap.get(victimContactId)); // Grab User ID associated with master Contact
-                    
-                    // Add User IDs to map if both are non-null
-                    if (oldUserId != null && newUserId != null)
-                        ownerIdMap.put(oldUserId, newUserId);
+                    // Add User IDs to map if both are in map
+                    if (contactUserIdMap.containsKey(victimContactId) && contactUserIdMap.containsKey(contactIdMap.get(victimContactId)))
+                        ownerIdMap.put(contactUserIdMap.get(victimContactId), contactUserIdMap.get(contactIdMap.get(victimContactId)));
                 }
                 
                 deactivateUsersFuture(userIdsToDeactivate); // Call @future method to deactivate users and avoid mixed DML error
@@ -101,21 +106,35 @@ public class ObjectMergeHandleUsers implements Queueable {
     @testVisible
     private static void deactivateUsers(Set<Id> userIdsToDeactivate) {
         
-        // Query users
-        List<User> users = [SELECT Id, ContactId FROM User WHERE Id IN :userIdsToDeactivate];
+        // Build user query dynamically to maintain compatability with organizations that don't have communities
+        String query = 'SELECT Id' + (ObjectMergeUtility.portalEnabled ? ', ContactId' : '') + ' FROM User WHERE Id IN :userIdsToDeactivate';
         
-        // Loop over users and set fields
-        for (User u:users) {
-            
-            u.Email = UserInfo.getOrganizationId() + '.' + u.Id + '@merged.invalid'; // Set to something unique to org/record
-            u.Username = u.Email;
-            u.CommunityNickname = u.Id;
-            u.IsActive = false;
-            u.IsPortalEnabled = false;
-            u.FederationIdentifier = null;
-        }
+        List<SObject> users = Database.query(query); // Query users
+        setUserFieldsToDeactivate(users); // Set fields to deactivate users
         
         update users; // Update users
+    }
+    
+    // Method to set fields in order to deactivate users
+    @testVisible
+    private static void setUserFieldsToDeactivate(List<SObject> users) {
+        
+        Id organizationId = UserInfo.getOrganizationId();
+        Boolean portalEnabled = ObjectMergeUtility.portalEnabled;
+        
+        // Loop over users and set fields
+        for (SObject u:users) {
+            
+            u.put('Email', organizationId + '.' + u.Id + '@merged.invalid'); // Set to something unique to org/record
+            u.put('Username', u.get('Email'));
+            u.put('IsActive', false);
+            u.put('FederationIdentifier', null);
+            
+            if (portalEnabled) {
+                u.put('CommunityNickname', u.Id);
+                u.put('IsPortalEnabled', false);
+            }
+        }
     }
     
     // Constructor for queueable implementation
@@ -136,8 +155,13 @@ public class ObjectMergeHandleUsers implements Queueable {
     // Execute method with seperate logic for test classes
 	public void execute(Boolean enqueueAnotherJob) {
         
+        Set<Id> userIdsToDeactivate = this.userIdsToDeactivate; // Get set of user IDs to deactivate for query
+        
+        // Build user query dynamically to maintain compatability with organizations that don't have communities
+        String query = 'SELECT count() FROM User WHERE ' + (ObjectMergeUtility.portalEnabled ? 'IsPortalEnabled = true AND ' : '') + 'Id IN :userIdsToDeactivate LIMIT 1';
+        
         // Check to see if all users are fully deactivated and process merges if so
-        if ([SELECT Id FROM User WHERE IsPortalEnabled = true AND Id IN :this.userIdsToDeactivate LIMIT 1].isEmpty()) {
+        if (Database.countQuery(query) == 0) {
             
             // Query for Object Merge Pairs
             List<Object_Merge_Pair__c> pairs = [SELECT Id, Master_ID__c, Victim_ID__c, Status__c FROM Object_Merge_Pair__c WHERE Id IN :this.pairIds];

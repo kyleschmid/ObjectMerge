@@ -27,6 +27,10 @@
                 <behavior>Edit</behavior>
                 <field>Use_for_Matching__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Treat_False_as_Null__c</field>
+            </layoutItems>
         </layoutColumns>
         <style>TwoColumnsTopToBottom</style>
     </layoutSections>

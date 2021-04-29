@@ -34,6 +34,21 @@ public without sharing class ObjectMergeUtility {
     // Get global describe once to save CPU time
     private static final Map<String, SObjectType> GLOBAL_DESCRIBE = Schema.getGlobalDescribe();
     
+    // Static Boolean that tracks if organization is portal enabled
+    public static Boolean portalEnabled {
+        get {
+            if (portalEnabled == null) {
+                
+                Map<String, Schema.SObjectField> userFieldMap = User.getSObjectType().getDescribe().fields.getMap(); // Get user field map from describe
+                portalEnabled = userFieldMap.containsKey('ContactId') && userFieldMap.containsKey('IsPortalEnabled'); // Determine if organization is portal enabled
+            }
+            
+            return portalEnabled;
+        }
+        
+        private set;
+    }
+    
     // Static map of handler wrappers
     private static Map<Schema.SObjectType, ObjectMergeHandlerWrapper> handlers {
         get {
@@ -60,7 +75,7 @@ public without sharing class ObjectMergeUtility {
                 }
 				
                 // Query fields and put in fieldMap
-                for (Object_Merge_Field__c f:[SELECT Id, Object_Merge_Handler__c, Name, Use_for_Matching__c FROM Object_Merge_Field__c WHERE Active__c = true AND Object_Merge_Handler__c IN :fieldMap.keySet()])
+                for (Object_Merge_Field__c f:[SELECT Id, Object_Merge_Handler__c, Name, Use_for_Matching__c, Treat_False_as_Null__c FROM Object_Merge_Field__c WHERE Active__c = true AND Object_Merge_Handler__c IN :fieldMap.keySet()])
                     fieldMap.get(f.Object_Merge_Handler__c).add(f);
 				
                 // Loop over handlers and get wrapper for each
@@ -213,7 +228,7 @@ public without sharing class ObjectMergeUtility {
                     if (childHandler.isValid) {
                         
                         // Set handleUser if this is a child handler for users. Otherwise, add to child handler list
-                        if (isContact && childHandler.token == userToken && childHandler.lookupField.name == 'ContactId')
+                        if (isContact && childHandler.token == userToken && childHandler.lookupField.name == 'ContactId' && portalEnabled)
                             this.handleUser = true;
                         else
                         	this.childHandlers.add(childHandler);
@@ -281,7 +296,7 @@ public without sharing class ObjectMergeUtility {
                     if (this.fieldMap.containsKey(objectMergeField.Name)) {
                         
                         // Instantiate field wrapper
-                        ObjectMergeFieldWrapper field = new ObjectMergeFieldWrapper(this.fieldMap.get(objectMergeField.Name), objectMergeField.Use_for_Matching__c);
+                        ObjectMergeFieldWrapper field = new ObjectMergeFieldWrapper(this.fieldMap.get(objectMergeField.Name), objectMergeField.Use_for_Matching__c, objectMergeField.Treat_False_as_Null__c);
                         
                         this.fields.add(field); // Add field to field wrapper list
                         this.queryFields.add(field.name); // Add field to query fields set
@@ -299,6 +314,10 @@ public without sharing class ObjectMergeUtility {
             
             // Get pairs to merge now from list (filter-out victim Contacts with active users)
             List<Object_Merge_Pair__c> pairsToMerge = getPairsToMerge(pairs);
+            
+            // Exit if no pairs to merge (processing asynchronously)
+            if (pairsToMerge.isEmpty())
+                return;
             
             // Loop over pairs and get set of parent record ids
             Set<Id> parentIds = new Set<Id>();
@@ -404,8 +423,8 @@ public without sharing class ObjectMergeUtility {
             
             // Query for users tied to victim contacts and get set of IDs for those users
             Set<Id> contactIdsToSkip = new Set<Id>();
-            for (User u:[SELECT Id, ContactId FROM User WHERE IsPortalEnabled = true AND ContactId IN :contactIds])
-                contactIdsToSkip.add(u.ContactId);
+            for (SObject u:Database.query('SELECT Id, ContactId FROM User WHERE IsPortalEnabled = true AND ContactId IN :contactIds'))
+                contactIdsToSkip.add((Id)u.get('ContactId'));
             
             List<Object_Merge_Pair__c> pairsToMerge = new List<Object_Merge_Pair__c>(); // Instantiate list of pairs to merge
             
@@ -447,10 +466,13 @@ public without sharing class ObjectMergeUtility {
             // Loop over all fields in this handler
             for (ObjectMergeFieldWrapper f:this.fields) {
                 
+                Object masterValue = master.get(f.token); // Get master field value
+                Object victimValue = victim.get(f.token); // Get victim field value
+                
                 // Check to see if master field value is null and victim field value is not null
-                if (master.get(f.token) == null && victim.get(f.token) != null) {
+                if ((masterValue == null || (f.treatFalseAsNull && masterValue == false)) && victimValue != null) {
                     
-                    master.put(f.token, victim.get(f.token)); // Copy victim field value to master field
+                    master.put(f.token, victimValue); // Copy victim field value to master field
                     ret = true; // Return true because at least one field on master was updated
                 }
             }
@@ -615,15 +637,16 @@ public without sharing class ObjectMergeUtility {
         private String name; // Field API name (lowercase)
         private List<Schema.SObjectType> referenceObjects; // List of object types that this field references (if reference field)
         private Boolean useForMatching; // Boolean to track whether this field is used for matching
+        private Boolean treatFalseAsNull; // Boolean to track whether a value of false should be treated as null for checkbox fields
 		
         // Constructor for lookup fields
         private ObjectMergeFieldWrapper(Schema.SObjectField token) {
 			
-            this(token, false); // Call constructor with useForMatching false
+            this(token, false, false); // Call constructor with useForMatching false
         }
 		
         // Constructor (primary)
-        private ObjectMergeFieldWrapper(Schema.SObjectField token, Boolean useForMatching) {
+        private ObjectMergeFieldWrapper(Schema.SObjectField token, Boolean useForMatching, Boolean treatFalseAsNull) {
             
             Schema.DescribeFieldResult describe = token.getDescribe(); // Grab describe from field type
             
@@ -631,6 +654,7 @@ public without sharing class ObjectMergeUtility {
             this.name = describe.getName().toLowerCase(); // Set API name from describe and lowercase it
             this.referenceObjects = describe.getReferenceTo(); // Set referenceObjects from describe (returns null if non-reference field)
             this.useForMatching = useForMatching; // Set useForMatching
+            this.treatFalseAsNull = treatFalseAsNull; // Set treatFalseAsNull
         }
     }
     

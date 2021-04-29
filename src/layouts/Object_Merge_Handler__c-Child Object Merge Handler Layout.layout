@@ -82,6 +82,7 @@
     <relatedLists>
         <fields>NAME</fields>
         <fields>Use_for_Matching__c</fields>
+        <fields>Treat_False_as_Null__c</fields>
         <fields>Active__c</fields>
         <relatedList>Object_Merge_Field__c.Object_Merge_Handler__c</relatedList>
         <sortField>NAME</sortField>
