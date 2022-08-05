@@ -147,7 +147,7 @@
     <enableActivities>false</enableActivities>
     <enableBulkApi>false</enableBulkApi>
     <enableFeeds>false</enableFeeds>
-    <enableHistory>false</enableHistory>
+    <enableHistory>true</enableHistory>
     <enableLicensing>false</enableLicensing>
     <enableReports>true</enableReports>
     <enableSearch>false</enableSearch>
@@ -161,6 +161,7 @@
         <externalId>false</externalId>
         <inlineHelpText>If checked, this merge handler will be used during the Object merge process.</inlineHelpText>
         <label>Active</label>
+        <trackHistory>true</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
@@ -171,6 +172,7 @@
         <externalId>false</externalId>
         <inlineHelpText>If checked, a victim record that would normally be reparented would instead be cloned. This is useful for master-detail relationships that don&apos;t allow reparenting.</inlineHelpText>
         <label>Clone Reparented Victim</label>
+        <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
@@ -181,6 +183,7 @@
         <inlineHelpText>How the merge will be performed.</inlineHelpText>
         <label>Merge Action</label>
         <required>false</required>
+        <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Picklist</type>
         <valueSet>
@@ -223,6 +226,7 @@
         <label>Object Lookup Field API Name</label>
         <length>40</length>
         <required>false</required>
+        <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
@@ -236,6 +240,7 @@
         <precision>3</precision>
         <required>false</required>
         <scale>0</scale>
+        <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Number</type>
         <unique>false</unique>
@@ -251,6 +256,7 @@
         <relationshipLabel>Object Merge Handlers</relationshipLabel>
         <relationshipName>Object_Merge_Handlers</relationshipName>
         <required>false</required>
+        <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Lookup</type>
     </fields>
@@ -261,6 +267,7 @@
         <inlineHelpText>Action to be performed on the victim record when a duplicate is not found.</inlineHelpText>
         <label>Standard Action</label>
         <required>false</required>
+        <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Picklist</type>
         <valueSet>
@@ -347,9 +354,11 @@
     </listViews>
     <nameField>
         <label>Object API Name</label>
+        <trackHistory>false</trackHistory>
         <type>Text</type>
     </nameField>
     <pluralLabel>Object Merge Handlers</pluralLabel>
+    <recordTypeTrackHistory>false</recordTypeTrackHistory>
     <recordTypes>
         <fullName>Child_Handler</fullName>
         <active>true</active>

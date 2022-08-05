@@ -29,6 +29,8 @@
     </types>
     <types>
         <members>Object_Merge_Field__c.Active__c</members>
+        <members>Object_Merge_Field__c.Keep_Most_Recent_Value__c</members>
+        <members>Object_Merge_Field__c.Keep_Null_Value__c</members>
         <members>Object_Merge_Field__c.Object_Merge_Handler__c</members>
         <members>Object_Merge_Field__c.Treat_False_as_Null__c</members>
         <members>Object_Merge_Field__c.Use_for_Matching__c</members>
@@ -39,6 +41,14 @@
         <members>Object_Merge_Handler__c.Order_of_Execution__c</members>
         <members>Object_Merge_Handler__c.Parent_Handler__c</members>
         <members>Object_Merge_Handler__c.Standard_Action__c</members>
+        <members>Object_Merge_Pair__c.Apex_Exception_Line_Number__c</members>
+        <members>Object_Merge_Pair__c.Apex_Exception_Message__c</members>
+        <members>Object_Merge_Pair__c.Apex_Exception_Stack_Trace__c</members>
+        <members>Object_Merge_Pair__c.Apex_Exception_Type__c</members>
+        <members>Object_Merge_Pair__c.DML_Exception_Field_Names__c</members>
+        <members>Object_Merge_Pair__c.DML_Exception_IDs__c</members>
+        <members>Object_Merge_Pair__c.DML_Exception_Messages__c</members>
+        <members>Object_Merge_Pair__c.DML_Exception_Types__c</members>
         <members>Object_Merge_Pair__c.Error_Reason__c</members>
         <members>Object_Merge_Pair__c.Master_ID__c</members>
         <members>Object_Merge_Pair__c.Merge_Date__c</members>
@@ -88,5 +98,5 @@
         <members>Object_Merge_Handler__c.Standard_Action_Populated</members>
         <name>ValidationRule</name>
     </types>
-    <version>51.0</version>
+    <version>55.0</version>
 </Package>

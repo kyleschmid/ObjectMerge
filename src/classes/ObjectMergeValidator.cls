@@ -1,7 +1,7 @@
 /*
     BSD 3-Clause License
     
-    Copyright (c) 2021, Kyle Schmid, Huron Consulting Group
+    Copyright (c) 2022, Kyle Schmid, Tondro Consulting, LLC
     All rights reserved.
     
     Redistribution and use in source and binary forms, with or without
@@ -42,6 +42,7 @@ public class ObjectMergeValidator {
     private static final String INVALID_LOOKUP_FIELD_ERROR = 'This Object Merge Handler is invalid because the Object Lookup Field does not exist on the object. Check to make sure the API name is valid.';
     private static final String INVALID_LOOKUP_ERROR = 'This Object Merge Handler is invalid because the Object Lookup Field is not a field that references the parent object.';
     private static final String INVALID_FIELD_ERROR = 'This Object Merge Field is invalid because the field does not exist on the parent object. Check to make sure the API name is valid.';
+    private static final String INVALID_KEEP_MOST_RECENT_VALUE_FIELD_ERROR = 'This Object Merge Field is invalid because the Keep Most Recent Value checkbox is checked but Field History Tracking is not enabled.';
     
     // Method to ensure the Object Merge Handlers are valid
     public static void validateObjectMergeHandlers(List<Object_Merge_Handler__c> objectMergeHandlers) {
@@ -120,15 +121,14 @@ public class ObjectMergeValidator {
         // Ensure each active field is valid
         if (!activeFields.isEmpty()) {
             
-            // Map of fields for object by Object Merge Handler ID
-            Map<Id, Map<String, Schema.SObjectField>> handlerFieldMap = new Map<Id, Map<String, Schema.SObjectField>>();
+            Map<Id, Map<String, Schema.SObjectField>> handlerFieldMap = new Map<Id, Map<String, Schema.SObjectField>>(); // Map of fields for object by Object Merge Handler ID
             
             // Query Object Merge Handlers and populate map from describe information
             for (Object_Merge_Handler__c h:[SELECT Id, Name FROM Object_Merge_Handler__c WHERE Id IN :handlerIds])
                 if (GLOBAL_DESCRIBE.containsKey(h.Name))
                     handlerFieldMap.put(h.Id, GLOBAL_DESCRIBE.get(h.Name).getDescribe().fields.getMap());
             
-            // Loop through all fields and add error to any that have an invalid API name for the parent object
+            // Loop through all active fields, check to see if field API name is valid and add error if not
             for (Object_Merge_Field__c f:activeFields)
                 if (!handlerFieldMap.containsKey(f.Object_Merge_Handler__c) || !handlerFieldMap.get(f.Object_Merge_Handler__c).containsKey(f.Name))
                     f.addError(INVALID_FIELD_ERROR);

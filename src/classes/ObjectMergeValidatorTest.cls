@@ -1,7 +1,7 @@
 /*
     BSD 3-Clause License
     
-    Copyright (c) 2021, Kyle Schmid, Huron Consulting Group
+    Copyright (c) 2022, Kyle Schmid, Tondro Consulting, LLC
     All rights reserved.
     
     Redistribution and use in source and binary forms, with or without
@@ -147,7 +147,6 @@ private class ObjectMergeValidatorTest {
         insert fields;
         
         fields[0].Name = 'Website';
-        
         fields[1].Name = 'Not_a_Field';
         fields[2].Name = 'Not_a_Field';
         fields[2].Active__c = false;

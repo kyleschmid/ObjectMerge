@@ -147,13 +147,112 @@
     <enableActivities>false</enableActivities>
     <enableBulkApi>false</enableBulkApi>
     <enableFeeds>false</enableFeeds>
-    <enableHistory>false</enableHistory>
+    <enableHistory>true</enableHistory>
     <enableLicensing>false</enableLicensing>
     <enableReports>true</enableReports>
     <enableSearch>false</enableSearch>
     <enableSharing>false</enableSharing>
     <enableStreamingApi>false</enableStreamingApi>
     <externalSharingModel>ReadWrite</externalSharingModel>
+    <fields>
+        <fullName>Apex_Exception_Line_Number__c</fullName>
+        <description>The line number the Apex exception occurred on.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>The line number the Apex exception occurred on.</inlineHelpText>
+        <label>Apex Exception Line Number</label>
+        <precision>5</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Apex_Exception_Message__c</fullName>
+        <description>The message of an Apex Exception.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>The message of an Apex Exception.</inlineHelpText>
+        <label>Apex Exception Message</label>
+        <length>32768</length>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Apex_Exception_Stack_Trace__c</fullName>
+        <description>The stack trace of an Apex Exception.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>The stack trace of an Apex Exception.</inlineHelpText>
+        <label>Apex Exception Stack Trace</label>
+        <length>32768</length>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Apex_Exception_Type__c</fullName>
+        <description>The name of the Apex Exception type.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>The name of the Apex Exception type.</inlineHelpText>
+        <label>Apex Exception Type</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>DML_Exception_Field_Names__c</fullName>
+        <description>Names of the fields that caused the DML Exception for all failed rows.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Names of the fields that caused the DML Exception for all failed rows.</inlineHelpText>
+        <label>DML Exception Field Names</label>
+        <length>32768</length>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>DML_Exception_IDs__c</fullName>
+        <description>IDs of all rows that had a DML Exception.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>IDs of all rows that had a DML Exception.</inlineHelpText>
+        <label>DML Exception IDs</label>
+        <length>32768</length>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>DML_Exception_Messages__c</fullName>
+        <description>DML Exception Messages for all failed rows.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>DML Exception Messages for all failed rows.</inlineHelpText>
+        <label>DML Exception Messages</label>
+        <length>32768</length>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>DML_Exception_Types__c</fullName>
+        <description>Types of DML Exceptions for all failed rows.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Types of DML Exceptions for all failed rows.</inlineHelpText>
+        <label>DML Exception Types</label>
+        <length>32768</length>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
     <fields>
         <fullName>Error_Reason__c</fullName>
         <description>Reason for an &quot;Error&quot; status.</description>
@@ -162,6 +261,7 @@
         <label>Error Reason</label>
         <length>255</length>
         <required>false</required>
+        <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
@@ -174,6 +274,7 @@
         <label>Master ID</label>
         <length>18</length>
         <required>true</required>
+        <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
@@ -185,6 +286,7 @@
         <inlineHelpText>Date/time the merge was attempted/completed.</inlineHelpText>
         <label>Merge Date</label>
         <required>false</required>
+        <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
         <type>DateTime</type>
     </fields>
@@ -195,6 +297,7 @@
         <inlineHelpText>Status of the merge operation.</inlineHelpText>
         <label>Status</label>
         <required>false</required>
+        <trackHistory>true</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Picklist</type>
         <valueSet>
@@ -232,6 +335,7 @@
         <label>Victim ID</label>
         <length>18</length>
         <required>true</required>
+        <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
@@ -253,7 +357,13 @@
         <columns>Master_ID__c</columns>
         <columns>Victim_ID__c</columns>
         <columns>Merge_Date__c</columns>
+        <columns>Status__c</columns>
         <columns>Error_Reason__c</columns>
+        <columns>Apex_Exception_Type__c</columns>
+        <columns>Apex_Exception_Message__c</columns>
+        <columns>DML_Exception_IDs__c</columns>
+        <columns>DML_Exception_Types__c</columns>
+        <columns>DML_Exception_Messages__c</columns>
         <filterScope>Everything</filterScope>
         <filters>
             <field>Status__c</field>
@@ -279,6 +389,7 @@
     <nameField>
         <displayFormat>OMP-{0000000}</displayFormat>
         <label>Object Merge Pair Numer</label>
+        <trackHistory>false</trackHistory>
         <type>AutoNumber</type>
     </nameField>
     <pluralLabel>Object Merge Pairs</pluralLabel>

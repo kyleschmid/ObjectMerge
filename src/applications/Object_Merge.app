@@ -5,6 +5,7 @@
     <formFactors>Large</formFactors>
     <isNavAutoTempTabsDisabled>false</isNavAutoTempTabsDisabled>
     <isNavPersonalizationDisabled>false</isNavPersonalizationDisabled>
+    <isNavTabPersistenceDisabled>false</isNavTabPersistenceDisabled>
     <label>Object Merge</label>
     <tabs>standard-Contact</tabs>
     <tabs>Object_Merge_Handler__c</tabs>

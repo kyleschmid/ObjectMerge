@@ -55,8 +55,15 @@
         <layoutColumns/>
         <style>CustomLinks</style>
     </layoutSections>
+    <miniLayout>
+        <fields>Name</fields>
+        <fields>RecordTypeId</fields>
+        <fields>Active__c</fields>
+    </miniLayout>
     <relatedLists>
         <fields>NAME</fields>
+        <fields>Keep_Most_Recent_Value__c</fields>
+        <fields>Keep_Null_Value__c</fields>
         <fields>Treat_False_as_Null__c</fields>
         <fields>Active__c</fields>
         <relatedList>Object_Merge_Field__c.Object_Merge_Handler__c</relatedList>

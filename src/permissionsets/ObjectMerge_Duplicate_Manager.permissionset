@@ -7,51 +7,6 @@
     <description>Permissions needed to use the ObjectMerge Duplicate Manager Lightning Component.</description>
     <fieldPermissions>
         <editable>false</editable>
-        <field>Object_Merge_Field__c.Active__c</field>
-        <readable>false</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>false</editable>
-        <field>Object_Merge_Field__c.Use_for_Matching__c</field>
-        <readable>false</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>false</editable>
-        <field>Object_Merge_Handler__c.Active__c</field>
-        <readable>false</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>false</editable>
-        <field>Object_Merge_Handler__c.Clone_Reparented_Victim__c</field>
-        <readable>false</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>false</editable>
-        <field>Object_Merge_Handler__c.Merge_Action__c</field>
-        <readable>false</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>false</editable>
-        <field>Object_Merge_Handler__c.Object_Lookup_Field_API_Name__c</field>
-        <readable>false</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>false</editable>
-        <field>Object_Merge_Handler__c.Order_of_Execution__c</field>
-        <readable>false</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>false</editable>
-        <field>Object_Merge_Handler__c.Parent_Handler__c</field>
-        <readable>false</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>false</editable>
-        <field>Object_Merge_Handler__c.Standard_Action__c</field>
-        <readable>false</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>false</editable>
         <field>Object_Merge_Pair__c.Error_Reason__c</field>
         <readable>true</readable>
     </fieldPermissions>

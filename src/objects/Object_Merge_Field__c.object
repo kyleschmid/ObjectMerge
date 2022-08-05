@@ -147,7 +147,7 @@
     <enableActivities>false</enableActivities>
     <enableBulkApi>false</enableBulkApi>
     <enableFeeds>false</enableFeeds>
-    <enableHistory>false</enableHistory>
+    <enableHistory>true</enableHistory>
     <enableLicensing>false</enableLicensing>
     <enableReports>true</enableReports>
     <enableSearch>false</enableSearch>
@@ -161,6 +161,29 @@
         <externalId>false</externalId>
         <inlineHelpText>If checked, this field will be included in processing.</inlineHelpText>
         <label>Active</label>
+        <trackHistory>true</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Keep_Most_Recent_Value__c</fullName>
+        <defaultValue>false</defaultValue>
+        <description>If checked, the most recent value of this field according to Field History Tracking will be kept.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>If checked, the most recent value of this field according to Field History Tracking will be kept.</inlineHelpText>
+        <label>Keep Most Recent Value</label>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Keep_Null_Value__c</fullName>
+        <defaultValue>false</defaultValue>
+        <description>If checked, null field values will be kept if more recent than non-null values when the &quot;Keep Most Recent Value&quot; checkbox is checked or if on the master record if not checked.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>If checked, null field values will be kept if more recent than non-null values when the &quot;Keep Most Recent Value&quot; checkbox is checked or if on the master record if not checked.</inlineHelpText>
+        <label>Keep Null Value</label>
+        <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
@@ -175,6 +198,7 @@
         <relationshipName>Object_Merge_Fields</relationshipName>
         <relationshipOrder>0</relationshipOrder>
         <reparentableMasterDetail>true</reparentableMasterDetail>
+        <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
         <type>MasterDetail</type>
         <writeRequiresMasterRead>false</writeRequiresMasterRead>
@@ -186,6 +210,7 @@
         <externalId>false</externalId>
         <inlineHelpText>When checked, the value of unchecked checkbox fields will be treated as null during the merge process. Unchecked checkbox fields on master records will be overwritten by checked checkbox fields on victim records.</inlineHelpText>
         <label>Treat False as Null</label>
+        <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
@@ -196,12 +221,14 @@
         <externalId>false</externalId>
         <inlineHelpText>If checked, this field will be used to match to duplicate related records on the master record.</inlineHelpText>
         <label>Use for Matching</label>
+        <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <label>Object Merge Field</label>
     <nameField>
         <label>Field API Name</label>
+        <trackHistory>false</trackHistory>
         <type>Text</type>
     </nameField>
     <pluralLabel>Object Merge Fields</pluralLabel>
