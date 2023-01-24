@@ -61,7 +61,10 @@
         <fields>Active__c</fields>
     </miniLayout>
     <relatedLists>
+        <excludeButtons>MassChangeOwner</excludeButtons>
         <fields>NAME</fields>
+        <fields>Use_for_Matching__c</fields>
+        <fields>Keep_Least_Recent_Value__c</fields>
         <fields>Keep_Most_Recent_Value__c</fields>
         <fields>Keep_Null_Value__c</fields>
         <fields>Treat_False_as_Null__c</fields>
@@ -71,6 +74,7 @@
         <sortOrder>Asc</sortOrder>
     </relatedLists>
     <relatedLists>
+        <excludeButtons>MassChangeOwner</excludeButtons>
         <fields>NAME</fields>
         <fields>Object_Lookup_Field_API_Name__c</fields>
         <fields>Standard_Action__c</fields>

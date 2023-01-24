@@ -329,7 +329,68 @@ private class ObjectMergePairTriggerHandlerTest {
     }
     
     @isTest
+    static void test_keep_least_recent_value() {
+        
+        Id pId = Schema.SObjectType.Object_Merge_Handler__c.getRecordTypeInfosByDeveloperName().get('Parent_Handler').getRecordTypeId();
+        
+        Object_Merge_Handler__c h1 = new Object_Merge_Handler__c(Name = 'Account', Active__c = true, RecordTypeId = pId);
+        Object_Merge_Handler__c h2 = new Object_Merge_Handler__c(Name = 'Account', Active__c = true, RecordTypeId = pId);
+        insert new List<Object_Merge_Handler__c>{h1, h2};
+        
+        Object_Merge_Field__c f1 = new Object_Merge_Field__c(Name = 'Name', Object_Merge_Handler__c = h1.Id, Active__c = true);
+        Object_Merge_Field__c f2 = new Object_Merge_Field__c(Name = 'Name', Object_Merge_Handler__c = h2.Id, Active__c = true);
+        insert new List<Object_Merge_Field__c>{f1, f2};
+        
+        Datetime createdDate = System.now().addHours(-1);
+        
+        Test.setCreatedDate(h1.Id, createdDate);
+        Test.setCreatedDate(h2.Id, createdDate);
+        Test.setCreatedDate(f1.Id, createdDate);
+        Test.setCreatedDate(f2.Id, createdDate);
+        
+        h2.Active__c = false;
+        update h2;
+        
+        f2.Active__c = false;
+        update f2;
+        
+        insert new Object_Merge_Handler__History(ParentId = h2.Id, Field = 'Active__c');
+        insert new Object_Merge_Field__History(ParentId = f2.Id, Field = 'Active__c');
+        
+        Object_Merge_Pair__c p = new Object_Merge_Pair__c(Master_ID__c = h1.Id, Victim_ID__c = h2.Id);
+        
+        Test.startTest();
+        
+        insert p;
+        
+        Test.stopTest();
+        
+        p = [SELECT Id, Status__c FROM Object_Merge_Pair__c WHERE Id = :p.Id];
+        System.assertEquals('Merged', p.Status__c);
+        
+        h1 = [SELECT Id, Active__c FROM Object_Merge_Handler__c WHERE Id = :h1.Id];
+        System.assertEquals(true, h1.Active__c);
+        
+        System.assert([SELECT Id FROM Object_Merge_Handler__c WHERE Id = :h2.Id].isEmpty());
+        
+        f1 = [SELECT Id, Active__c FROM Object_Merge_Field__c WHERE Id = :f1.Id];
+        System.assertEquals(true, f1.Active__c);
+        
+        System.assert([SELECT Id FROM Object_Merge_Field__c WHERE Id = :f2.Id].isEmpty());
+    }
+    
+    @isTest
     static void test_keep_most_recent_value() {
+        
+        Object_Merge_Field__c f8 = [SELECT Id FROM Object_Merge_Field__c WHERE Object_Merge_Handler__r.Name = 'Object_Merge_Handler__c' AND Name = 'Active__c'];
+        Object_Merge_Field__c f9 = [SELECT Id FROM Object_Merge_Field__c WHERE Object_Merge_Handler__r.Name = 'Object_Merge_Field__c' AND Name = 'Active__c'];
+        
+        f8.Keep_Least_Recent_Value__c = false;
+        f9.Keep_Least_Recent_Value__c = false;
+        f8.Keep_Most_Recent_Value__c = true;
+        f9.Keep_Most_Recent_Value__c = true;
+        
+        update new List<Object_Merge_Field__c>{f8, f9};
         
         Id pId = Schema.SObjectType.Object_Merge_Handler__c.getRecordTypeInfosByDeveloperName().get('Parent_Handler').getRecordTypeId();
         
@@ -662,9 +723,9 @@ private class ObjectMergePairTriggerHandlerTest {
         Object_Merge_Field__c f5 = new Object_Merge_Field__c(Name = 'Email', Use_for_Matching__c = false, Object_Merge_Handler__c = ch1.Id, Active__c = true);
         Object_Merge_Field__c f6 = new Object_Merge_Field__c(Name = 'DoNotCall', Use_for_Matching__c = false, Object_Merge_Handler__c = ch1.Id, Active__c = true);
         Object_Merge_Field__c f7 = new Object_Merge_Field__c(Name = 'HasOptedOutOfEmail', Use_for_Matching__c = false, Object_Merge_Handler__c = ch1.Id, Active__c = true, Treat_False_as_Null__c = true);
-        Object_Merge_Field__c f8 = new Object_Merge_Field__c(Name = 'Active__c', Use_for_Matching__c = false, Object_Merge_Handler__c = ph3.Id, Active__c = true, Keep_Most_Recent_Value__c = true);
+        Object_Merge_Field__c f8 = new Object_Merge_Field__c(Name = 'Active__c', Use_for_Matching__c = false, Object_Merge_Handler__c = ph3.Id, Active__c = true, Keep_Least_Recent_Value__c = true);
         Object_Merge_Field__c f9 = new Object_Merge_Field__c(Name = 'Name', Use_for_Matching__c = true, Object_Merge_Handler__c = ch3.Id, Active__c = true);
-        Object_Merge_Field__c f10 = new Object_Merge_Field__c(Name = 'Active__c', Use_for_Matching__c = false, Object_Merge_Handler__c = ch3.Id, Active__c = true, Keep_Most_Recent_Value__c = true);
+        Object_Merge_Field__c f10 = new Object_Merge_Field__c(Name = 'Active__c', Use_for_Matching__c = false, Object_Merge_Handler__c = ch3.Id, Active__c = true, Keep_Least_Recent_Value__c = true);
         insert new List<Object_Merge_Field__c>{f1, f2, f3, f4, f5, f6, f7, f8, f9, f10};
     }
 }

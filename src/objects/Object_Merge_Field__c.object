@@ -166,6 +166,17 @@
         <type>Checkbox</type>
     </fields>
     <fields>
+        <fullName>Keep_Least_Recent_Value__c</fullName>
+        <defaultValue>false</defaultValue>
+        <description>If checked, the least recent value of this field according to Field History Tracking will be kept.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>If checked, the least recent value of this field according to Field History Tracking will be kept.</inlineHelpText>
+        <label>Keep Least Recent Value</label>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
         <fullName>Keep_Most_Recent_Value__c</fullName>
         <defaultValue>false</defaultValue>
         <description>If checked, the most recent value of this field according to Field History Tracking will be kept.</description>
@@ -234,5 +245,12 @@
     <pluralLabel>Object Merge Fields</pluralLabel>
     <searchLayouts/>
     <sharingModel>ControlledByParent</sharingModel>
+    <validationRules>
+        <fullName>Keep_Most_Least_Recent_Value</fullName>
+        <active>true</active>
+        <description>Ensures that both the Keep Least Recent Value and Keep Most Recent Value checkboxes are not checked.</description>
+        <errorConditionFormula>Keep_Least_Recent_Value__c &amp;&amp; Keep_Most_Recent_Value__c</errorConditionFormula>
+        <errorMessage>Both the Keep Least Recent Value checkbox and Keep Most Recent Value checkbox cannot be checked at the same time.</errorMessage>
+    </validationRules>
     <visibility>Public</visibility>
 </CustomObject>

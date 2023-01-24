@@ -76,7 +76,7 @@ public without sharing class ObjectMergeUtility {
                 }
 				
                 // Query fields and put in fieldMap
-                for (Object_Merge_Field__c f:[SELECT Id, Object_Merge_Handler__c, Name, Use_for_Matching__c, Keep_Most_Recent_Value__c, Keep_Null_Value__c, Treat_False_as_Null__c FROM Object_Merge_Field__c WHERE Active__c = true AND Object_Merge_Handler__c IN :fieldMap.keySet()])
+                for (Object_Merge_Field__c f:[SELECT Id, Object_Merge_Handler__c, Name, Use_for_Matching__c, Keep_Least_Recent_Value__c, Keep_Most_Recent_Value__c, Keep_Null_Value__c, Treat_False_as_Null__c FROM Object_Merge_Field__c WHERE Active__c = true AND Object_Merge_Handler__c IN :fieldMap.keySet()])
                     fieldMap.get(f.Object_Merge_Handler__c).add(f);
 				
                 // Loop over handlers and get wrapper for each
@@ -304,6 +304,7 @@ public without sharing class ObjectMergeUtility {
         private List<ObjectMergeHandlerWrapper> childHandlers; // List of child handler wrappers
         private ObjectMergeFieldWrapper lookupField; // Field wrapper representing lookup field (used in child handlers)
         private List<ObjectMergeFieldWrapper> matchingFields; // List of field wrappers to match on (used in child handlers)
+        private Set<String> keepLeastRecentValueFields; // Set of field names to keep least recent field value for
         private Set<String> keepMostRecentValueFields; // Set of field names to keep most recent field value for
         private Set<String> queryFields; // Set of fields to query
         
@@ -393,6 +394,7 @@ public without sharing class ObjectMergeUtility {
                 this.fieldMap = describe.fields.getMap(); // Set fieldMap
                 this.fields = new List<ObjectMergeFieldWrapper>(); // Instantiate list of field wrappers
                 this.matchingFields = new List<ObjectMergeFieldWrapper>(); // Instantiate list of matching field wrappers
+                this.keepLeastRecentValueFields = new Set<String>(); // Instantiate set of keep least recent value field names
                 this.keepMostRecentValueFields = new Set<String>(); // Instantiate set of keep most recent value field names
                 this.hasOwner = this.fieldMap.containsKey('OwnerId'); // See if object has OwnerId
                 this.checkFieldHistory = GLOBAL_DESCRIBE.containsKey(this.historyObjectName); // See if object has field history tracking enabled
@@ -416,7 +418,7 @@ public without sharing class ObjectMergeUtility {
                     if (this.fieldMap.containsKey(objectMergeField.Name)) {
                         
                         // Instantiate field wrapper
-                        ObjectMergeFieldWrapper field = new ObjectMergeFieldWrapper(this.fieldMap.get(objectMergeField.Name), objectMergeField.Use_for_Matching__c, objectMergeField.Keep_Most_Recent_Value__c, objectMergeField.Keep_Null_Value__c, objectMergeField.Treat_False_as_Null__c);
+                        ObjectMergeFieldWrapper field = new ObjectMergeFieldWrapper(this.fieldMap.get(objectMergeField.Name), objectMergeField.Use_for_Matching__c, objectMergeField.Keep_Least_Recent_Value__c, objectMergeField.Keep_Most_Recent_Value__c, objectMergeField.Keep_Null_Value__c, objectMergeField.Treat_False_as_Null__c);
                         
                         this.fields.add(field); // Add field to field wrapper list
                         this.queryFields.add(field.name); // Add field to query fields set
@@ -425,13 +427,15 @@ public without sharing class ObjectMergeUtility {
                         if (field.useForMatching)
                             this.matchingFields.add(field);
                         
-                        // Add field name to keepMostRecentValueFields set if keep most recent value is set
-                        if (field.keepMostRecentValue)
+                        // Add field name to keepLeastRecentValueFields if keep least recent value is set or keepMostRecentValueFields set if keep most recent value is set
+                        if (field.keepLeastRecentValue)
+                            this.keepLeastRecentValueFields.add(field.name);
+                        else if (field.keepMostRecentValue)
                             this.keepMostRecentValueFields.add(field.name);
                     }
                 }
                 
-                this.checkFieldHistory &= (!this.keepMostRecentValueFields.isEmpty()); // Only check field history if at least one field has keep most recent value set
+                this.checkFieldHistory &= (!this.keepLeastRecentValueFields.isEmpty() || !this.keepMostRecentValueFields.isEmpty()); // Only check field history if at least one field has keep least or most recent value set
             }
         }
         
@@ -583,7 +587,7 @@ public without sharing class ObjectMergeUtility {
                     fieldHistoryMap.put(recordId, new Map<String, SObject>());
                 
                 // Build field history object query
-                String query = 'SELECT Field, CreatedDate, ' + this.historyObjectParentFieldName + ' FROM ' + this.historyObjectName + ' WHERE ' + this.historyObjectParentFieldName + ' IN :recordIds AND Field IN :keepMostRecentValueFields ORDER BY CreatedDate DESC';
+                String query = 'SELECT Field, CreatedDate, ' + this.historyObjectParentFieldName + ' FROM ' + this.historyObjectName + ' WHERE ' + this.historyObjectParentFieldName + ' IN :recordIds AND (Field IN :keepLeastRecentValueFields OR Field IN :keepMostRecentValueFields) ORDER BY CreatedDate DESC';
                 
                 for (SObject history:Database.query(query)) {
                     
@@ -661,20 +665,21 @@ public without sharing class ObjectMergeUtility {
                 
                 Object masterValue = master.get(f.token); // Get master field value
                 Object victimValue = victim.get(f.token); // Get victim field value
-                Boolean victimLastUpdated = false; // Boolean that tracks if the victim value was the last updated
+                Boolean keepVictim = false; // Boolean that tracks if the victim value should be kept
                 
                 // Check to see if victim value was last updated if field is set to keep most recent value
-                if (this.checkFieldHistory && f.keepMostRecentValue && masterFieldHistory != null && victimFieldHistory != null) {
+                if (this.checkFieldHistory && (f.keepLeastRecentValue || f.keepMostRecentValue) && masterFieldHistory != null && victimFieldHistory != null) {
                     
                     // Get last update date/time from field history if it exists, otherwise created date of record
                     Datetime masterFieldUpdated = (Datetime)(masterFieldHistory.containsKey(f.name) ? masterFieldHistory.get(f.name) : master).get('CreatedDate');
                     Datetime victimFieldUpdated = (Datetime)(victimFieldHistory.containsKey(f.name) ? victimFieldHistory.get(f.name) : victim).get('CreatedDate');
                     
-                    victimLastUpdated = victimFieldUpdated > masterFieldUpdated; // Set victim last updated if last updated date/time is greater than master
+                    // Determine if victim value should be kept based on settings and last updated values
+                    keepVictim = (f.keepLeastRecentValue && victimFieldUpdated < masterFieldUpdated) || (f.keepMostRecentValue && victimFieldUpdated > masterFieldUpdated);
                 }
                 
                 // Check to see if master field value is null and victim field value is not null
-                if (masterValue != victimValue && ((!f.keepNullValue && f.isNull(masterValue)) || (victimLastUpdated && (f.keepNullValue || !f.isNull(victimValue))))) {
+                if (masterValue != victimValue && ((!f.keepNullValue && f.isNull(masterValue)) || (keepVictim && (f.keepNullValue || !f.isNull(victimValue))))) {
                     
                     master.put(f.token, victimValue); // Copy victim field value to master field
                     ret = true; // Return true because at least one field on master was updated
@@ -852,6 +857,7 @@ public without sharing class ObjectMergeUtility {
         private String name; // Field API name (lowercase)
         private List<Schema.SObjectType> referenceObjects; // List of object types that this field references (if reference field)
         private Boolean useForMatching; // Boolean to track whether this field is used for matching
+        private Boolean keepLeastRecentValue; // Boolean to track whether to look at Field History Tracking data to get the least recent value of this field
         private Boolean keepMostRecentValue; // Boolean to track whether to look at Field History Tracking data to get the most recent value of this field
         private Boolean keepNullValue; // Boolean to track whether a null value is considered
         private Boolean treatFalseAsNull; // Boolean to track whether a value of false should be treated as null for checkbox fields
@@ -859,11 +865,11 @@ public without sharing class ObjectMergeUtility {
         // Constructor for lookup fields
         private ObjectMergeFieldWrapper(Schema.SObjectField token) {
 			
-            this(token, false, false, false, false); // Call constructor with all booleans false
+            this(token, false, false, false, false, false); // Call constructor with all booleans false
         }
 		
         // Constructor (primary)
-        private ObjectMergeFieldWrapper(Schema.SObjectField token, Boolean useForMatching, Boolean keepMostRecentValue, Boolean keepNullValue, Boolean treatFalseAsNull) {
+        private ObjectMergeFieldWrapper(Schema.SObjectField token, Boolean useForMatching, Boolean keepLeastRecentValue, Boolean keepMostRecentValue, Boolean keepNullValue, Boolean treatFalseAsNull) {
             
             Schema.DescribeFieldResult describe = token.getDescribe(); // Grab describe from field type
             
@@ -871,6 +877,7 @@ public without sharing class ObjectMergeUtility {
             this.name = describe.getName().toLowerCase(); // Set API name from describe and lowercase it
             this.referenceObjects = describe.getReferenceTo(); // Set referenceObjects from describe (returns null if non-reference field)
             this.useForMatching = useForMatching; // Set useForMatching
+            this.keepLeastRecentValue = keepLeastRecentValue; // Set keepLeastRecentValue
             this.keepMostRecentValue = keepMostRecentValue; // Set keepMostRecentValue
             this.keepNullValue = keepNullValue; // Set keepNullValue
             this.treatFalseAsNull = treatFalseAsNull; // Set treatFalseAsNull

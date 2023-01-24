@@ -254,6 +254,19 @@
         <visibleLines>3</visibleLines>
     </fields>
     <fields>
+        <fullName>Duplicate_Contact__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Duplicate Contact</label>
+        <referenceTo>Contact</referenceTo>
+        <relationshipLabel>Object Merge Pairs</relationshipLabel>
+        <relationshipName>Object_Merge_Pairs</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
         <fullName>Error_Reason__c</fullName>
         <description>Reason for an &quot;Error&quot; status.</description>
         <externalId>false</externalId>

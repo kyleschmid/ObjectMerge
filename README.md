@@ -13,8 +13,8 @@ ObjectMerge is released under the open source BSD license. Contributions (code a
 ### Unmangaged Package
 
 You can go to one of the following links to install Object Merge as an unmanaged package:
-* <a href="https://login.salesforce.com/packaging/installPackage.apexp?p0=04t6S000001UjQY" target="_blank" >Production</a>
-* <a href="https://test.salesforce.com/packaging/installPackage.apexp?p0=04t6S000001UjQY" target="_blank" >Sandbox</a>
+* <a href="https://login.salesforce.com/packaging/installPackage.apexp?p0=04t6S000001MLnj" target="_blank" >Production</a>
+* <a href="https://test.salesforce.com/packaging/installPackage.apexp?p0=04t6S000001MLnj" target="_blank" >Sandbox</a>
 
 ### Ant/Force.com Migration Tool
 You can fork this repository and deploy the unmanaged version of the code into a Salesforce org of your choice.
@@ -94,7 +94,8 @@ Once installed, you'll want to set up your first Object Merge Handler. To do so,
 5. Click "New" on the Object Merge Fields related list
   	* Create a new object Merge Field record for every field you want to merge for this object
   	* Check the "Use for Matching" checkbox for any fields that you want to consider when finding duplicates
-	* Check the "Keep Most Recent Value" checkbox for any fields that you want to keep the most recent value for during a merge based on Field History Tracking data
+	* Check the "Keep Least Recent Value" checkbox for any fields that you want to keep the least recent value for during a merge based on Field History Tracking data (cannot be used in conjunction with Keep Most Recent Value)
+	* Check the "Keep Most Recent Value" checkbox for any fields that you want to keep the most recent value for during a merge based on Field History Tracking data (cannot be used in conjunction with Keep Least Recent Value)
 	* Check the "Keep Null Value" checkbox if you have the "Keep Most Recent Value" checkbox checked and you want a null value to be kept during a merge if it is more recent than a non-null value
 	* Check the "Treat False as Null" checkbox if you want to treat a false value on a checkbox field as if it were null during a merge. This allows a true value to overwrite a false value.
 6. You're now ready to perform your first merge! Go to the Object Merge Pairs tab and click "New"

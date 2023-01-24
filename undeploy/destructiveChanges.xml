@@ -29,6 +29,7 @@
     </types>
     <types>
         <members>Object_Merge_Field__c.Active__c</members>
+        <members>Object_Merge_Field__c.Keep_Least_Recent_Value__c</members>
         <members>Object_Merge_Field__c.Keep_Most_Recent_Value__c</members>
         <members>Object_Merge_Field__c.Keep_Null_Value__c</members>
         <members>Object_Merge_Field__c.Object_Merge_Handler__c</members>
@@ -94,9 +95,10 @@
         <name>RecordType</name>
     </types>
     <types>
+        <members>Object_Merge_Field__c.Keep_Most_Least_Recent_Value</members>
         <members>Object_Merge_Handler__c.Parent_Handler_Populated</members>
         <members>Object_Merge_Handler__c.Standard_Action_Populated</members>
         <name>ValidationRule</name>
     </types>
-    <version>55.0</version>
+    <version>56.0</version>
 </Package>

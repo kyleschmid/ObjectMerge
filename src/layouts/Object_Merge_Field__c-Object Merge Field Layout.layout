@@ -29,6 +29,10 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
+                <field>Keep_Least_Recent_Value__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
                 <field>Keep_Most_Recent_Value__c</field>
             </layoutItems>
             <layoutItems>
@@ -76,6 +80,7 @@
         <fields>Name</fields>
         <fields>Use_for_Matching__c</fields>
         <fields>Active__c</fields>
+        <fields>Keep_Least_Recent_Value__c</fields>
         <fields>Keep_Most_Recent_Value__c</fields>
         <fields>Keep_Null_Value__c</fields>
         <fields>Treat_False_as_Null__c</fields>
