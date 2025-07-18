@@ -19,6 +19,10 @@
                 <behavior>Edit</behavior>
                 <field>Active__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Merge_All_Fields__c</field>
+            </layoutItems>
         </layoutColumns>
         <style>TwoColumnsTopToBottom</style>
     </layoutSections>
@@ -58,6 +62,7 @@
     <miniLayout>
         <fields>Name</fields>
         <fields>RecordTypeId</fields>
+        <fields>Merge_All_Fields__c</fields>
         <fields>Active__c</fields>
     </miniLayout>
     <relatedLists>
@@ -79,6 +84,7 @@
         <fields>Object_Lookup_Field_API_Name__c</fields>
         <fields>Standard_Action__c</fields>
         <fields>Merge_Action__c</fields>
+        <fields>Merge_All_Fields__c</fields>
         <fields>Order_of_Execution__c</fields>
         <fields>Active__c</fields>
         <relatedList>Object_Merge_Handler__c.Parent_Handler__c</relatedList>

@@ -158,7 +158,6 @@
         <fullName>Active__c</fullName>
         <defaultValue>true</defaultValue>
         <description>If checked, this merge handler will be used during the Object merge process.</description>
-        <externalId>false</externalId>
         <inlineHelpText>If checked, this merge handler will be used during the Object merge process.</inlineHelpText>
         <label>Active</label>
         <trackHistory>true</trackHistory>
@@ -169,7 +168,6 @@
         <fullName>Clone_Reparented_Victim__c</fullName>
         <defaultValue>false</defaultValue>
         <description>If checked, a victim record that would normally be reparented would instead be cloned. This is useful for master-detail relationships that don&apos;t allow reparenting.</description>
-        <externalId>false</externalId>
         <inlineHelpText>If checked, a victim record that would normally be reparented would instead be cloned. This is useful for master-detail relationships that don&apos;t allow reparenting.</inlineHelpText>
         <label>Clone Reparented Victim</label>
         <trackHistory>false</trackHistory>
@@ -179,7 +177,6 @@
     <fields>
         <fullName>Merge_Action__c</fullName>
         <description>How the merge will be performed.</description>
-        <externalId>false</externalId>
         <inlineHelpText>How the merge will be performed.</inlineHelpText>
         <label>Merge Action</label>
         <required>false</required>
@@ -219,6 +216,16 @@
         </valueSet>
     </fields>
     <fields>
+        <fullName>Merge_All_Fields__c</fullName>
+        <defaultValue>false</defaultValue>
+        <description>When checked, all writable fields on the object will be included when merging. By default, fields populated on the master record will not be overwritten. Blank or null fields on the master record will be overwritten by non-blank/null values on the victim record. Settings specified in each Object Merge Field will overwrite the default behavior.</description>
+        <inlineHelpText>When checked, all writable fields on the object will be included when merging. By default, fields populated on the master record will not be overwritten. Blank or null fields on the master record will be overwritten by non-blank/null values on the victim record. Settings specified in each Object Merge Field will overwrite the default behavior.</inlineHelpText>
+        <label>Merge All Fields</label>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
         <fullName>Object_Lookup_Field_API_Name__c</fullName>
         <description>API name of the field on the related object that looks up to Object.</description>
         <externalId>false</externalId>
@@ -249,7 +256,6 @@
         <fullName>Parent_Handler__c</fullName>
         <deleteConstraint>SetNull</deleteConstraint>
         <description>Handler for the parent object.</description>
-        <externalId>false</externalId>
         <inlineHelpText>Handler for the parent object.</inlineHelpText>
         <label>Parent Handler</label>
         <referenceTo>Object_Merge_Handler__c</referenceTo>
@@ -263,7 +269,6 @@
     <fields>
         <fullName>Standard_Action__c</fullName>
         <description>Action to be performed on the victim record when a duplicate is not found.</description>
-        <externalId>false</externalId>
         <inlineHelpText>Action to be performed on the victim record when a duplicate is not found.</inlineHelpText>
         <label>Standard Action</label>
         <required>false</required>
@@ -297,9 +302,14 @@
         <fullName>Active_Merge_Handlers</fullName>
         <columns>NAME</columns>
         <columns>RECORDTYPE</columns>
-        <columns>Order_of_Execution__c</columns>
+        <columns>Parent_Handler__c</columns>
+        <columns>Object_Lookup_Field_API_Name__c</columns>
         <columns>Standard_Action__c</columns>
-        <columns>LAST_UPDATE</columns>
+        <columns>Merge_Action__c</columns>
+        <columns>Clone_Reparented_Victim__c</columns>
+        <columns>Merge_All_Fields__c</columns>
+        <columns>Order_of_Execution__c</columns>
+        <columns>Active__c</columns>
         <filterScope>Everything</filterScope>
         <filters>
             <field>Active__c</field>
@@ -317,6 +327,7 @@
         <columns>Standard_Action__c</columns>
         <columns>Merge_Action__c</columns>
         <columns>Clone_Reparented_Victim__c</columns>
+        <columns>Merge_All_Fields__c</columns>
         <columns>Order_of_Execution__c</columns>
         <columns>Active__c</columns>
         <filterScope>Everything</filterScope>
@@ -330,6 +341,7 @@
         <columns>Standard_Action__c</columns>
         <columns>Merge_Action__c</columns>
         <columns>Clone_Reparented_Victim__c</columns>
+        <columns>Merge_All_Fields__c</columns>
         <columns>Order_of_Execution__c</columns>
         <columns>Active__c</columns>
         <filterScope>Everything</filterScope>
@@ -344,6 +356,7 @@
         <fullName>Parent_Handlers</fullName>
         <columns>NAME</columns>
         <columns>Active__c</columns>
+        <columns>Merge_All_Fields__c</columns>
         <filterScope>Everything</filterScope>
         <filters>
             <field>RECORDTYPE</field>

@@ -1,7 +1,7 @@
 /*
     BSD 3-Clause License
     
-    Copyright (c) 2022, Kyle Schmid, Tondro Consulting, LLC
+    Copyright (c) 2025, Kyle Schmid, Tondro Consulting, LLC
     All rights reserved.
     
     Redistribution and use in source and binary forms, with or without
@@ -60,7 +60,7 @@ public without sharing class ObjectMergeUtility {
                 handlers = new Map<Schema.SObjectType, ObjectMergeHandlerWrapper>(); // Instantiate map
 				
                 // Query parent and child merge handlers
-                List<Object_Merge_Handler__c> objectMergeHandlers = [SELECT Id, Name, (SELECT Id, Name, Object_Lookup_Field_API_Name__c, Standard_Action__c, Merge_Action__c, Clone_Reparented_Victim__c FROM Object_Merge_Handlers__r WHERE Active__c = true ORDER BY Order_of_Execution__c ASC NULLS LAST) FROM Object_Merge_Handler__c WHERE RecordType.DeveloperName = 'Parent_Handler' AND Active__c = true];
+                List<Object_Merge_Handler__c> objectMergeHandlers = [SELECT Id, Name, Merge_All_Fields__c, (SELECT Id, Name, Object_Lookup_Field_API_Name__c, Standard_Action__c, Merge_Action__c, Clone_Reparented_Victim__c, Merge_All_Fields__c FROM Object_Merge_Handlers__r WHERE Active__c = true ORDER BY Order_of_Execution__c ASC NULLS LAST) FROM Object_Merge_Handler__c WHERE RecordType.DeveloperName = 'Parent_Handler' AND Active__c = true];
                 
                 // Map of fields by handler ID
                 Map<Id, List<Object_Merge_Field__c>> fieldMap = new Map<Id, List<Object_Merge_Field__c>>();
@@ -411,6 +411,8 @@ public without sharing class ObjectMergeUtility {
                 if (this.hasOwner)
                     this.queryFields.add('ownerid');
 				
+                Set<Schema.SObjectField> objectMergeFieldTokens = new Set<Schema.SObjectField>(); // Set of field tokens handled by Object Merge Field records
+                
                 // Loop over object merge fields and add valid fields to field wrapper list
                 for (Object_Merge_Field__c objectMergeField:objectMergeFields) {
                     
@@ -420,6 +422,7 @@ public without sharing class ObjectMergeUtility {
                         // Instantiate field wrapper
                         ObjectMergeFieldWrapper field = new ObjectMergeFieldWrapper(this.fieldMap.get(objectMergeField.Name), objectMergeField.Use_for_Matching__c, objectMergeField.Keep_Least_Recent_Value__c, objectMergeField.Keep_Most_Recent_Value__c, objectMergeField.Keep_Null_Value__c, objectMergeField.Treat_False_as_Null__c);
                         
+                        objectMergeFieldTokens.add(field.token); // Add token to set
                         this.fields.add(field); // Add field to field wrapper list
                         this.queryFields.add(field.name); // Add field to query fields set
                         
@@ -432,6 +435,27 @@ public without sharing class ObjectMergeUtility {
                             this.keepLeastRecentValueFields.add(field.name);
                         else if (field.keepMostRecentValue)
                             this.keepMostRecentValueFields.add(field.name);
+                    }
+                }
+                
+                // Add all updateable fields for object to field list if Merge All Fields is true
+                if (objectMergeHandler.Merge_All_Fields__c) {
+                    
+                    // Loop over all fields for object
+                    for (Schema.SObjectField token:this.fieldMap.values()) {
+                        
+                        // Check to see if field is already handled by an Object Merge Field
+                        if (!objectMergeFieldTokens.contains(token)) {
+                            
+                        	ObjectMergeFieldWrapper field = new ObjectMergeFieldWrapper(token); // Instantiate field wrapper
+                            
+                            // Check to see if field is updateable
+                            if (field.describe.isUpdateable()) {
+                                
+                                this.fields.add(field); // Add field to field wrapper list
+                                this.queryFields.add(field.name); // Add field to query fields set
+                            }
+                        }
                     }
                 }
                 
@@ -854,6 +878,7 @@ public without sharing class ObjectMergeUtility {
     private class ObjectMergeFieldWrapper {
         
         private Schema.SObjectField token; // Field type
+        private Schema.DescribeFieldResult describe; // Field describe
         private String name; // Field API name (lowercase)
         private List<Schema.SObjectType> referenceObjects; // List of object types that this field references (if reference field)
         private Boolean useForMatching; // Boolean to track whether this field is used for matching
@@ -862,7 +887,7 @@ public without sharing class ObjectMergeUtility {
         private Boolean keepNullValue; // Boolean to track whether a null value is considered
         private Boolean treatFalseAsNull; // Boolean to track whether a value of false should be treated as null for checkbox fields
 		
-        // Constructor for lookup fields
+        // Constructor for lookup fields and merge all fields fields
         private ObjectMergeFieldWrapper(Schema.SObjectField token) {
 			
             this(token, false, false, false, false, false); // Call constructor with all booleans false
@@ -871,11 +896,10 @@ public without sharing class ObjectMergeUtility {
         // Constructor (primary)
         private ObjectMergeFieldWrapper(Schema.SObjectField token, Boolean useForMatching, Boolean keepLeastRecentValue, Boolean keepMostRecentValue, Boolean keepNullValue, Boolean treatFalseAsNull) {
             
-            Schema.DescribeFieldResult describe = token.getDescribe(); // Grab describe from field type
-            
             this.token = token; // Set field type
-            this.name = describe.getName().toLowerCase(); // Set API name from describe and lowercase it
-            this.referenceObjects = describe.getReferenceTo(); // Set referenceObjects from describe (returns null if non-reference field)
+            this.describe = token.getDescribe(); // Set describe
+            this.name = this.describe.getName().toLowerCase(); // Set API name from describe and lowercase it
+            this.referenceObjects = this.describe.getReferenceTo(); // Set referenceObjects from describe (returns null if non-reference field)
             this.useForMatching = useForMatching; // Set useForMatching
             this.keepLeastRecentValue = keepLeastRecentValue; // Set keepLeastRecentValue
             this.keepMostRecentValue = keepMostRecentValue; // Set keepMostRecentValue

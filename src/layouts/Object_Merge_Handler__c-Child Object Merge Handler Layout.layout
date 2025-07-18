@@ -43,6 +43,10 @@
                 <behavior>Edit</behavior>
                 <field>Clone_Reparented_Victim__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Merge_All_Fields__c</field>
+            </layoutItems>
         </layoutColumns>
         <style>TwoColumnsTopToBottom</style>
     </layoutSections>
@@ -88,6 +92,7 @@
         <fields>Standard_Action__c</fields>
         <fields>Merge_Action__c</fields>
         <fields>Clone_Reparented_Victim__c</fields>
+        <fields>Merge_All_Fields__c</fields>
         <fields>Active__c</fields>
     </miniLayout>
     <relatedLists>

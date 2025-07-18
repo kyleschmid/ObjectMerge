@@ -13,8 +13,8 @@ ObjectMerge is released under the open source BSD license. Contributions (code a
 ### Unmangaged Package
 
 You can go to one of the following links to install Object Merge as an unmanaged package:
-* <a href="https://login.salesforce.com/packaging/installPackage.apexp?p0=04t6S000001MLnj" target="_blank" >Production</a>
-* <a href="https://test.salesforce.com/packaging/installPackage.apexp?p0=04t6S000001MLnj" target="_blank" >Sandbox</a>
+* <a href="https://login.salesforce.com/packaging/installPackage.apexp?p0=04t6S000001MSXw" target="_blank" >Production</a>
+* <a href="https://test.salesforce.com/packaging/installPackage.apexp?p0=04t6S000001MSXw" target="_blank" >Sandbox</a>
 
 ### Ant/Force.com Migration Tool
 You can fork this repository and deploy the unmanaged version of the code into a Salesforce org of your choice.
@@ -70,11 +70,15 @@ Once installed, you'll want to set up your first Object Merge Handler. To do so,
 1. Go to the Object Merge Handlers table
 2. Create a new Object Merge Handler with the Parent Handler record type
 	* Populate the Object API Name with the API name of the main object to be merged (e.g. "Account")
+	* Optionally check the "Merge All Fields" checkbox, which will copy non-null field values from the victim to corresponding null field values on the master for all writable fields. Merge behavior for fields defined in the Object Merge Fields related list will take precedent. If this checkbox is not checked, only fields defined in the Object Merge Fields related list will be merged.
 3. Click "New" on the Object Merge Fields related list
   	* Populate each Object Merge Field record with the API name of the field on the parent object (e.g. "Name" or "Description")
-  	* When the merge is performed, any field that is null on the master but not null on the victim will be copied over to the master
+  	* When the merge is performed, any field that is null on the master but not null on the victim will be copied over to the master unless "Keep Least Recent Value" or "Keep Most Recent Value" is checked
   	* Ignore the "Use for Matching" checkbox for parent fields
-	* If the field is a checkbox field and you want values of true to always overwrite values of false, check the "Treat False as Null" checkbox
+	* Check the "Keep Least Recent Value" checkbox for any fields that you want to keep the least recent value for based on Field History Tracking data (cannot be used in conjunction with Keep Most Recent Value)
+	* Check the "Keep Most Recent Value" checkbox for any fields that you want to keep the most recent value for based on Field History Tracking data (cannot be used in conjunction with Keep Least Recent Value)
+	* Check the "Keep Null Value" checkbox if you have the "Keep Least Recent Value" or "Keep Most Recent Value" checkboxes checked and you want a null value to be kept if it is less/more recent than a non-null value
+	* Check the "Treat False as Null" checkbox if you want to treat a false value on a checkbox field as if it were null during a merge. This allows a true value to overwrite a false value.
 4. Go back to the Object Merge Handler and click "New" on the Object Merge Handlers related list
   	* Select "Child Handler" for the Record Type
   	* Populate the Object API Name of the field with the API name of the object related to the parent object that you want to merge (e.g. "Contact")
@@ -91,12 +95,13 @@ Once installed, you'll want to set up your first Object Merge Handler. To do so,
     	* Delete Duplicate: The victim will be deleted without any merging
     	* Keep Master: The victim will be merged into the master and the victim will be deleted
     * Check the "Clone Reparented Victim" checkbox if you'd like the victim to be cloned if it is the winner. This is useful for master-detail relationships that don't allow reparenting. In this case, the victim will be cloned and the master will be merged into the clone. The clone will then be reparented and inserted. Both the master and the victim will be deleted.
+	* Optionally check the "Merge All Fields" checkbox, which will copy non-null field values from the victim to corresponding null field values on the master for all writable fields during a merge. Merge behavior for fields defined in the Object Merge Fields related list will take precedent. If this checkbox is not checked, only fields defined in the Object Merge Fields related list will be merged.
 5. Click "New" on the Object Merge Fields related list
   	* Create a new object Merge Field record for every field you want to merge for this object
   	* Check the "Use for Matching" checkbox for any fields that you want to consider when finding duplicates
 	* Check the "Keep Least Recent Value" checkbox for any fields that you want to keep the least recent value for during a merge based on Field History Tracking data (cannot be used in conjunction with Keep Most Recent Value)
 	* Check the "Keep Most Recent Value" checkbox for any fields that you want to keep the most recent value for during a merge based on Field History Tracking data (cannot be used in conjunction with Keep Least Recent Value)
-	* Check the "Keep Null Value" checkbox if you have the "Keep Most Recent Value" checkbox checked and you want a null value to be kept during a merge if it is more recent than a non-null value
+	* Check the "Keep Null Value" checkbox if you have the "Keep Least Recent Value" or "Keep Most Recent Value" checkboxes checked and you want a null value to be kept during a merge if it is less/more recent than a non-null value
 	* Check the "Treat False as Null" checkbox if you want to treat a false value on a checkbox field as if it were null during a merge. This allows a true value to overwrite a false value.
 6. You're now ready to perform your first merge! Go to the Object Merge Pairs tab and click "New"
   	* Populate the Master ID with the ID of the record you want to keep
