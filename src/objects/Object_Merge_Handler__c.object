@@ -267,6 +267,19 @@
         <type>Lookup</type>
     </fields>
     <fields>
+        <fullName>SOQL_WHERE_Clause_Filter__c</fullName>
+        <description>SOQL WHERE clause filter on the child records being queried.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>SOQL WHERE clause filter on the child records being queried.</inlineHelpText>
+        <label>SOQL WHERE Clause Filter</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Standard_Action__c</fullName>
         <description>Action to be performed on the victim record when a duplicate is not found.</description>
         <inlineHelpText>Action to be performed on the victim record when a duplicate is not found.</inlineHelpText>
@@ -308,6 +321,7 @@
         <columns>Merge_Action__c</columns>
         <columns>Clone_Reparented_Victim__c</columns>
         <columns>Merge_All_Fields__c</columns>
+        <columns>SOQL_WHERE_Clause_Filter__c</columns>
         <columns>Order_of_Execution__c</columns>
         <columns>Active__c</columns>
         <filterScope>Everything</filterScope>
@@ -328,6 +342,7 @@
         <columns>Merge_Action__c</columns>
         <columns>Clone_Reparented_Victim__c</columns>
         <columns>Merge_All_Fields__c</columns>
+        <columns>SOQL_WHERE_Clause_Filter__c</columns>
         <columns>Order_of_Execution__c</columns>
         <columns>Active__c</columns>
         <filterScope>Everything</filterScope>
@@ -342,6 +357,7 @@
         <columns>Merge_Action__c</columns>
         <columns>Clone_Reparented_Victim__c</columns>
         <columns>Merge_All_Fields__c</columns>
+        <columns>SOQL_WHERE_Clause_Filter__c</columns>
         <columns>Order_of_Execution__c</columns>
         <columns>Active__c</columns>
         <filterScope>Everything</filterScope>

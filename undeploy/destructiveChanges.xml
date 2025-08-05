@@ -42,6 +42,7 @@
         <members>Object_Merge_Handler__c.Object_Lookup_Field_API_Name__c</members>
         <members>Object_Merge_Handler__c.Order_of_Execution__c</members>
         <members>Object_Merge_Handler__c.Parent_Handler__c</members>
+        <members>Object_Merge_Handler__c.SOQL_WHERE_Clause_Filter__c</members>
         <members>Object_Merge_Handler__c.Standard_Action__c</members>
         <members>Object_Merge_Pair__c.Apex_Exception_Line_Number__c</members>
         <members>Object_Merge_Pair__c.Apex_Exception_Message__c</members>

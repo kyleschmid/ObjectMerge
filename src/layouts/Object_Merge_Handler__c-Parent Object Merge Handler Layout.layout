@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Layout xmlns="http://soap.sforce.com/2006/04/metadata">
     <excludeButtons>ChangeOwnerOne</excludeButtons>
+    <excludeButtons>OpenSlackRecordChannel</excludeButtons>
     <excludeButtons>Share</excludeButtons>
     <excludeButtons>Submit</excludeButtons>
     <layoutSections>
@@ -85,6 +86,7 @@
         <fields>Standard_Action__c</fields>
         <fields>Merge_Action__c</fields>
         <fields>Merge_All_Fields__c</fields>
+        <fields>SOQL_WHERE_Clause_Filter__c</fields>
         <fields>Order_of_Execution__c</fields>
         <fields>Active__c</fields>
         <relatedList>Object_Merge_Handler__c.Parent_Handler__c</relatedList>

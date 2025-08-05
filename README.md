@@ -13,8 +13,8 @@ ObjectMerge is released under the open source BSD license. Contributions (code a
 ### Unmangaged Package
 
 You can go to one of the following links to install Object Merge as an unmanaged package:
-* <a href="https://login.salesforce.com/packaging/installPackage.apexp?p0=04t6S000001MSXw" target="_blank" >Production</a>
-* <a href="https://test.salesforce.com/packaging/installPackage.apexp?p0=04t6S000001MSXw" target="_blank" >Sandbox</a>
+* <a href="https://login.salesforce.com/packaging/installPackage.apexp?p0=04tKk000000gOQg" target="_blank" >Production</a>
+* <a href="https://test.salesforce.com/packaging/installPackage.apexp?p0=04tKk000000gOQg" target="_blank" >Sandbox</a>
 
 ### Ant/Force.com Migration Tool
 You can fork this repository and deploy the unmanaged version of the code into a Salesforce org of your choice.
@@ -96,6 +96,7 @@ Once installed, you'll want to set up your first Object Merge Handler. To do so,
     	* Keep Master: The victim will be merged into the master and the victim will be deleted
     * Check the "Clone Reparented Victim" checkbox if you'd like the victim to be cloned if it is the winner. This is useful for master-detail relationships that don't allow reparenting. In this case, the victim will be cloned and the master will be merged into the clone. The clone will then be reparented and inserted. Both the master and the victim will be deleted.
 	* Optionally check the "Merge All Fields" checkbox, which will copy non-null field values from the victim to corresponding null field values on the master for all writable fields during a merge. Merge behavior for fields defined in the Object Merge Fields related list will take precedent. If this checkbox is not checked, only fields defined in the Object Merge Fields related list will be merged.
+	* Optionally populate the "SOQL WHERE Clause Filter" field with conditions to filter the child records that are queried during the merge process.
 5. Click "New" on the Object Merge Fields related list
   	* Create a new object Merge Field record for every field you want to merge for this object
   	* Check the "Use for Matching" checkbox for any fields that you want to consider when finding duplicates

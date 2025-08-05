@@ -60,7 +60,7 @@ public without sharing class ObjectMergeUtility {
                 handlers = new Map<Schema.SObjectType, ObjectMergeHandlerWrapper>(); // Instantiate map
 				
                 // Query parent and child merge handlers
-                List<Object_Merge_Handler__c> objectMergeHandlers = [SELECT Id, Name, Merge_All_Fields__c, (SELECT Id, Name, Object_Lookup_Field_API_Name__c, Standard_Action__c, Merge_Action__c, Clone_Reparented_Victim__c, Merge_All_Fields__c FROM Object_Merge_Handlers__r WHERE Active__c = true ORDER BY Order_of_Execution__c ASC NULLS LAST) FROM Object_Merge_Handler__c WHERE RecordType.DeveloperName = 'Parent_Handler' AND Active__c = true];
+                List<Object_Merge_Handler__c> objectMergeHandlers = [SELECT Id, Name, Merge_All_Fields__c, (SELECT Id, Name, Object_Lookup_Field_API_Name__c, Standard_Action__c, Merge_Action__c, Clone_Reparented_Victim__c, Merge_All_Fields__c, SOQL_WHERE_Clause_Filter__c FROM Object_Merge_Handlers__r WHERE Active__c = true ORDER BY Order_of_Execution__c ASC NULLS LAST) FROM Object_Merge_Handler__c WHERE RecordType.DeveloperName = 'Parent_Handler' AND Active__c = true];
                 
                 // Map of fields by handler ID
                 Map<Id, List<Object_Merge_Field__c>> fieldMap = new Map<Id, List<Object_Merge_Field__c>>();
@@ -311,6 +311,7 @@ public without sharing class ObjectMergeUtility {
         private Id handlerId; // ID of Object Merge Handler record
         private String standardAction; // Standard Action from Object Merge Handler record
         private String mergeAction; // Merge Action from Object Merge Handler record
+        private String soqlWhereClause; // SOQL WHERE Clause for filtering child records that are queried
         private Boolean cloneReparentedVictim; // Clone Reparented Victim from Object Merge Pair record
         
         private Boolean isValid; // Boolean indicating this is a valid handler wrapper
@@ -365,6 +366,7 @@ public without sharing class ObjectMergeUtility {
                 // Copy field values from Object Merge Handler record
                 this.standardAction = objectMergeHandler.Standard_Action__c;
                 this.mergeAction = objectMergeHandler.Merge_Action__c;
+                this.soqlWhereClause = String.isBlank(objectMergeHandler.SOQL_WHERE_Clause_Filter__c) ? null : ' AND (' + objectMergeHandler.SOQL_WHERE_Clause_Filter__c + ')';
                 this.cloneReparentedVictim = objectMergeHandler.Clone_Reparented_Victim__c;
                 
                 // Set lookup field wrapper and add lookup field name to query field set
@@ -593,7 +595,7 @@ public without sharing class ObjectMergeUtility {
         private List<SObject> queryRecords(Set<Id> parentIds) {
 			
             // Query object for this handler based on queryFields, name, and lookupField if this is a child object (Id otherwise)
-            String query = 'SELECT ' + String.join(new List<String>(this.queryFields), ', ') + ' FROM ' + this.name + ' WHERE ' + (this.lookupField == null ? 'Id' : this.lookupField.Name) + ' IN :parentIds';
+            String query = 'SELECT ' + String.join(new List<String>(this.queryFields), ', ') + ' FROM ' + this.name + ' WHERE ' + (this.lookupField == null ? 'Id' : this.lookupField.Name) + ' IN :parentIds' + (this.soqlWhereClause == null ? '' : this.soqlWhereClause);
             
             return Database.query(query); // Query database and return result
         }
